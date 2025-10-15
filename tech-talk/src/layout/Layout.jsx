@@ -16,8 +16,25 @@ import {
   UserGroupIcon,
   NewspaperIcon,
 } from "@heroicons/react/24/solid";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "../pages/Home";
+import Communities from "../pages/Communities";
 
 function Layout() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<StaticLayout />}>
+          <Route index element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/communities" element={<Communities />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function StaticLayout() {
   return (
     <div className="h-screen w-full bg-gray-100 relative flex flex-col">
       {/* Header */}
@@ -25,7 +42,7 @@ function Layout() {
         <div className="flex items-center p-1">
           <img
             src={logo}
-            className="object-fill cursor-pointer h-12"
+            className="object-fill cursor-pointer h-19"
             alt="TechTalk Logo"
           />
           <h1 className="font-bold text-xl text-[#820000] ml-2">TechTalk</h1>
@@ -139,7 +156,7 @@ function Layout() {
         </aside>
 
         {/* 🔄 Main Content Changes Here */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>

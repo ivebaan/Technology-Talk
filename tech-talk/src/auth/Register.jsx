@@ -1,33 +1,75 @@
-import React, { useState } from 'react'
-import tech from '../assets/images/tech.png'
+import React, { useState } from "react";
+import tech from "../assets/images/tech.png";
 
 function Register() {
-
   const [studID, setStudID] = useState("");
   const [password, setPassword] = useState("");
 
-  return (
-    <div className="flex flex-col h-screen bg-[#410505dc]">
-      {/* Header */}
-      <div className="bg-white">
-        <img src={tech} className="size-25 mx-5 my-2" />
-        <hr className="border-t border-black" />
-      </div>
+  const handleRegister = () => {
+    if (!studID || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    alert(`Registered with ID: ${studID}`);
+  };
 
+  return (
+    <div className="flex flex-col h-screen bg-[#410505dc] text-[#410505] font-kanit">
       {/* Content */}
-      <div className="flex flex-1 justify-center items-center">
-        <div className="h-[600px] max-w-[600px] w-[600px] rounded-[15px] p-10 shadow-lg bg-[#e9e9e9] flex flex-col items-center px-20">
-            <h1 className='text-[40px] font-kanit my-5'>User Registration</h1>
-          {/* <img src={tech} className="size-30" /> */}
-          <input type='text' placeholder='Enter Student-ID' className='p-5 rounded-2xl w-full bg-white font-kanit my-5'/>
-          <input type='password' placeholder='Enter Password'  className='p-5 rounded-2xl w-full my-5 bg-white font-kanit'/>
-          <p className='flex mr-auto font-kanit text-[12px] ml-5'>Already Have Account? <a className='font-kanit italic text-blue-600 cursor-pointer hover:underline ml-0.5'>   Login</a></p>
-          <p className='font-kanit m-7'>By continuing, you agree to our <a className='underline cursor-pointer'>User Agreement</a> and acknowledge that you understand the <a className='underline cursor-pointer'>Privacy Policy</a>.</p>
-          <button className='bg-[#410505dc] p-5 w-full rounded-2xl text-white font-kanit text-lg cursor-pointer'>Register</button>
+      <div className="flex flex-1 justify-center items-center px-4 ">
+        <div className="w-full max-w-[450px] bg-[#e9e9e9] rounded-2xl p-10 shadow-xl flex flex-col items-center ">
+          <h1 className="text-4xl font-semibold mb-10">User Registration</h1>
+          {/* Optional Image */}
+          {/* <img src={tech} alt="Tech logo" className="w-20 mb-4" /> */}
+
+          <input
+            type="text"
+            placeholder="Enter Student ID"
+            value={studID}
+            onChange={(e) => setStudID(e.target.value)}
+            className="p-4 rounded-xl w-full bg-white border border-gray-300 text-gray-800 mb-4 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition"
+          />
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="p-4 rounded-xl w-full bg-white border border-gray-300 text-gray-800 mb-4 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition"
+          />
+
+          <p className="text-sm text-left w-full text-gray-700 mb-7">
+            Already have an account?{" "}
+            <a
+              href="#"
+              className="text-blue-600 italic hover:underline ml-1 cursor-pointer"
+            >
+              Login
+            </a>
+          </p>
+
+          <p className="text-xs text-gray-700 text-center mb-6">
+            By continuing, you agree to our{" "}
+            <a href="#" className="underline cursor-pointer">
+              User Agreement
+            </a>{" "}
+            and acknowledge that you understand the{" "}
+            <a href="#" className="underline cursor-pointer">
+              Privacy Policy
+            </a>
+            .
+          </p>
+
+          <button
+            onClick={handleRegister}
+            className="bg-[#410505dc] hover:bg-[#300303] text-white py-3 w-full rounded-xl text-lg transition cursor-pointer"
+          >
+            Register
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Register
+export default Register;
