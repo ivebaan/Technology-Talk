@@ -15,6 +15,7 @@ import {
   ChatBubbleLeftRightIcon,
   UserGroupIcon,
   NewspaperIcon,
+  BookmarkIcon
 } from "@heroicons/react/24/solid";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
@@ -119,6 +120,22 @@ function StaticLayout() {
               >
                 <ArrowTrendingUpIcon className="h-4 w-4" />
                 <span className="font-medium">Trending</span>
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/favorites"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
+              >
+                <BookmarkIcon className="h-4 w-4" />
+                <span className="font-medium">Favorites</span>
               </NavLink>
             </li>
           </ul>

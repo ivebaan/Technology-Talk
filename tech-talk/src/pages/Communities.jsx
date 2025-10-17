@@ -64,7 +64,7 @@ const Communities = () => {
   ];
 
   return (
-    <div className="bg-white min-h-screen text-maroon-900 p-8 max-w-6xl mx-auto">
+    <div className="bg-white min-h-screen text-maroon-900 p-8 max-w-5xl mx-auto">
       <h1 className="text-4xl font-bold mb-6 text-maroon-800">
         Explore Communities
       </h1>
