@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import logo from "../assets/images/tech.png";
 import {
   UsersIcon,
@@ -42,7 +42,7 @@ function StaticLayout() {
         <div className="flex items-center p-1">
           <img
             src={logo}
-            className="object-fill cursor-pointer h-19"
+            className="object-fill cursor-pointer h-16"
             alt="TechTalk Logo"
           />
           <h1 className="font-bold text-xl text-[#820000] ml-2">TechTalk</h1>
@@ -53,7 +53,7 @@ function StaticLayout() {
             <input
               type="text"
               placeholder="Search categories..."
-              className="w-64 pl-10 p-2 bg-gray-200 rounded-full focus:outline-[#820000]"
+              className="w-100 pl-10 p-2 bg-gray-200 rounded-full focus:outline-[#820000]"
             />
           </div>
         </div>
@@ -75,62 +75,76 @@ function StaticLayout() {
         <aside className="w-60 bg-white p-4 shadow-md">
           <ul className="space-y-1 w-full">
             <li>
-              <Link
-                to="/"
-                className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer"
+              <NavLink
+                to="/home"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
               >
-                <HomeIcon className="h-6 w-6 text-[#820000]" />
-                <span className="text-[#820000] font-medium">Home</span>
-              </Link>
+                <HomeIcon className="h-4 w-4" />
+                <span className="font-medium">Home</span>
+              </NavLink>
             </li>
 
             <li>
-              <Link
+              <NavLink
                 to="/communities"
-                className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
               >
-                <CursorArrowRippleIcon className="h-6 w-6 text-[#820000]" />
-                <span className="text-[#820000] font-medium">
-                  Explore Communities
-                </span>
-              </Link>
+                <CursorArrowRippleIcon className="h-4 w-4" />
+                <span className="font-medium">Explore Communities</span>
+              </NavLink>
             </li>
 
             <li>
-              <Link
+              <NavLink
                 to="/trending"
-                className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
               >
-                <ArrowTrendingUpIcon className="h-6 w-6 text-[#820000]" />
-                <span className="text-[#820000] font-medium">Trending</span>
-              </Link>
+                <ArrowTrendingUpIcon className="h-4 w-4" />
+                <span className="font-medium">Trending</span>
+              </NavLink>
             </li>
           </ul>
 
           <hr className="border-t border-gray-300 w-full my-4" />
 
-          <div>
-            <h2 className="text-gray-400 font-medium">CATEGORIES</h2>
-          </div>
+          <h2 className="text-gray-400 font-medium">CATEGORIES</h2>
 
           <ul className="space-y-1 w-full mt-4">
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <AcademicCapIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <AcademicCapIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">Academics</span>
             </li>
 
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <ChatBubbleLeftRightIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <ChatBubbleLeftRightIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">Q & A</span>
             </li>
 
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <UserGroupIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <UserGroupIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">Campus Life</span>
             </li>
 
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <CalendarDaysIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <CalendarDaysIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">Events</span>
             </li>
           </ul>
@@ -138,24 +152,24 @@ function StaticLayout() {
           <hr className="border-t border-gray-300 w-full my-4" />
 
           <ul className="space-y-1 w-full">
-            <li className="flex items-center gap-2 p-3 mt-4 hover:bg-gray-200 rounded-full cursor-pointer">
-              <NewspaperIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 mt-4 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <NewspaperIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">User Agreement</span>
             </li>
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <ShieldCheckIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rrounded-lg cursor-pointer">
+              <ShieldCheckIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">
                 Privacy & Policy
               </span>
             </li>
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-full cursor-pointer">
-              <UsersIcon className="h-6 w-6 text-[#820000]" />
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <UsersIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">Accessibility</span>
             </li>
           </ul>
         </aside>
 
-        {/* 🔄 Main Content Changes Here */}
+        {/* 🔄 Main Content */}
         <main className="p-6 overflow-y-auto">
           <Outlet />
         </main>
