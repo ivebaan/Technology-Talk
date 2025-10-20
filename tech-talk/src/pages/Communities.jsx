@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const CommunityCard = ({ title, visitors, description }) => (
   <div className="border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition">
@@ -12,56 +12,16 @@ const CommunityCard = ({ title, visitors, description }) => (
 );
 
 const Communities = () => {
-  const categories = [
-    "All",
-    "Internet Culture",
-    "Games",
-    "Q&As & Stories",
-    "Technology",
-    "Movies & TV",
-    "Places & Travel",
-    "Pop Culture",
-    "Business & Finance",
-  ];
+  const categories = ["Academics", "Q&A", "Campus Life", "Study Buddy"];
+  // const [communities, setCommunities] = useState([]);
+  const [recommended, setRecommended] = useState([]);
 
-  const recommended = [
-    {
-      title: "phclassifieds",
-      visitors: "64K",
-      description:
-        "Explore the Philippines' vibrant online marketplace for buying, selling, and trading.",
-    },
-    {
-      title: "travel",
-      visitors: "1.9M",
-      description:
-        "Embark on global adventures by experiencing destinations near and far.",
-    },
-    {
-      title: "indonesia",
-      visitors: "127K",
-      description:
-        "Learn about Indonesia's diverse culture, politics, and people.",
-    },
-    {
-      title: "interestingasf",
-      visitors: "9.4M",
-      description:
-        "Get lost in an incredible world of interesting and awe-inspiring content.",
-    },
-    {
-      title: "studentsph",
-      visitors: "145K",
-      description:
-        "Connect with fellow students in the Philippines for advice, discussion, and support.",
-    },
-    {
-      title: "filipinofood",
-      visitors: "74K",
-      description:
-        "Celebrate the greatness of Filipino cuisine! Share recipes, tips, and more.",
-    },
-  ];
+  useEffect(() => {
+    fetch("http://localhost:5000/recommended")
+      .then((res) => res.json())
+      .then((data) => setRecommended(data))
+      .catch((err) => console.error("Error fetching data: ", err));
+  }, []);
 
   return (
     <div className="bg-white min-h-screen text-maroon-900 p-8 max-w-5xl mx-auto">

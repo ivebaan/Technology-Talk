@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
-
 @font-face {
-    font-family: Kanit;
-    src: url(./assets/fonts/Kanit-Regular.ttf) format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: Kanit;
+  src: url(./assets/fonts/Kanit-Regular.ttf) format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @theme{
-    --font-kanit: "Kanit", sans-serif;
+  --font-kanit: "Kanit", sans-serif;
 }

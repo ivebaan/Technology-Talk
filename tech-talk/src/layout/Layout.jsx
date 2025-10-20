@@ -15,7 +15,7 @@ import {
   ChatBubbleLeftRightIcon,
   UserGroupIcon,
   NewspaperIcon,
-  BookmarkIcon
+  BookmarkIcon,
 } from "@heroicons/react/24/solid";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
@@ -173,7 +173,7 @@ function StaticLayout() {
               <NewspaperIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">User Agreement</span>
             </li>
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rrounded-lg cursor-pointer">
+            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
               <ShieldCheckIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">
                 Privacy & Policy

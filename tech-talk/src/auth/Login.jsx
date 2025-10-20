@@ -17,10 +17,10 @@ function Register() {
     <div className="flex flex-col h-screen bg-[#410505dc] text-[#410505] font-kanit">
       {/* Content */}
       <div className="flex flex-1 justify-center items-center px-4">
-        <div className="w-full max-w-[450px] bg-[#e9e9e9] rounded-2xl p-10 shadow-xl flex flex-col items-center">
-          <h1 className="text-4xl font-semibold mb-6">User Login</h1>
+        <div className="w-full max-w-[450px] bg-[#e9e9e9] rounded-2xl p-10 shadow-xl flex flex-col items-center mb-0">
+          {/* <img src={tech} alt="Tech logo" className="w-20" /> */}
+          <h1 className="text-4xl font-semibold mb-10">User Login</h1>
           {/* Optional Image */}
-          {/* <img src={tech} alt="Tech logo" className="w-20 mb-4" /> */}
 
           <input
             type="text"
