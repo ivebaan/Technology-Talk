@@ -17,7 +17,7 @@ const Communities = () => {
   const [recommended, setRecommended] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/recommended")
+    fetch("http://localhost:3000/recommended")
       .then((res) => res.json())
       .then((data) => setRecommended(data))
       .catch((err) => console.error("Error fetching data: ", err));

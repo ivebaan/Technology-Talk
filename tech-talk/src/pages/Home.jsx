@@ -7,13 +7,18 @@ import {
   FaAward,
 } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
+import axios from "axios";
 
 function Home() {
   useEffect(() => {
-    fetch("http://localhost:5000/posts")
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error("Error fetching posts:", err));
+    axios.get("http://localhost:3000/posts")
+  .then(response => {
+    setPosts(response.data); // <-- actually store the data
+  })
+  .catch(error => {
+    console.error("Error fetching posts:", error);
+  });
+
   }, []);
 
   const [posts, setPosts] = useState([]);

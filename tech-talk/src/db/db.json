@@ -195,5 +195,17 @@
       "visitors": "74K",
       "description": "Celebrate the greatness of Filipino cuisine! Share recipes, tips, and more."
     }
+  ],
+  "users":[
+    {
+      "id":1,
+      "email": "rodayban@gmail.com",
+      "password":"Onoy213892741"
+    },
+    {
+      "id":2,
+      "email": "rodive@gmail.com",
+      "password":"rodxd"
+    }
   ]
 }
