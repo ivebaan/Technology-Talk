@@ -21,21 +21,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import Communities from "../pages/Communities";
 
-function Layout() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<StaticLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/communities" element={<Communities />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
 
-function StaticLayout() {
+function Layout() {
   return (
     <div className="h-screen w-full bg-gray-100 relative flex flex-col">
       {/* Header */}
@@ -77,7 +64,7 @@ function StaticLayout() {
           <ul className="space-y-1 w-full">
             <li>
               <NavLink
-                to="/home"
+                to="/app/home"
                 className={({ isActive }) =>
                   `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
                     isActive
@@ -93,7 +80,7 @@ function StaticLayout() {
 
             <li>
               <NavLink
-                to="/communities"
+                to="/app/communities"
                 className={({ isActive }) =>
                   `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
                     isActive

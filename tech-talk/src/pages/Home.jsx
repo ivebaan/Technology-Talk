@@ -9,6 +9,7 @@ import {
 import { HiDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
 
+
 function Home() {
   useEffect(() => {
     axios.get("http://localhost:3000/posts")
