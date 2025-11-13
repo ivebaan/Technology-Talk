@@ -19,7 +19,48 @@
       "votes": 27,
       "comments": 45,
       "verified": false
-    }
+    },
+       {
+  "id": "3",
+  "title": "Naay nakasulay og online class nga walay kuryente?",
+  "content": "Lisod kaayo, nag hotspot ko sa silingan. Pero padayon gihapon basta makat-on lang.",
+  "author": "u/teknoy101",
+  "community": "r/Philippines",
+  "votes": 84,
+  "comments": 23,
+  "verified": false
+},
+{
+  "id": "4",
+  "title": "Libre internet sa plaza, legit?",
+  "content": "Naay free WiFi sa city plaza daw. Naka connect ko ganiha, hinay lang pero pwede ra pang research.",
+  "author": "u/cebulife",
+  "community": "r/cebu",
+  "votes": 56,
+  "comments": 19,
+  "verified": true
+},
+{
+  "id": "5",
+  "title": "Mga tips para di ma burnout sa college",
+  "content": "Kung kapoy na, pahulay usa. Bisan 15 mins lang. Di man kinahanglan mag suffer para lang makagraduate.",
+  "author": "u/studentlife",
+  "community": "r/collegePH",
+  "votes": 102,
+  "comments": 67,
+  "verified": true
+},
+{
+  "id": "6",
+  "title": "Naay part-time job nga flexible sa oras?",
+  "content": "Gusto ko mangita og work nga pwede ra after class, basin naa moy ma-recommend nga online or freelance.",
+  "author": "u/workingstudent",
+  "community": "r/jobsPH",
+  "votes": 41,
+  "comments": 32,
+  "verified": false
+}
+    
   ],
   "communities": [
     {
@@ -203,29 +244,14 @@
   ],
   "users": [
     {
-      "id": "1",
-      "email": "rodayban@gmail.com",
-      "password": "Onoy213892741"
-    },
-    {
       "id": "2",
       "email": "rodive@gmail.com",
       "password": "rodxd"
     },
     {
-      "id": "0c98",
+      "id": "2ed0",
       "email": "cambal@cit.edu",
-      "password": "Cambal123*"
-    },
-    {
-      "id": "f2c6",
-      "email": "camba123l@cit.edu",
-      "password": "Cambal12*"
-    },
-    {
-      "id": "d9a0",
-      "email": "ang@cit.edu",
-      "password": "Ang123*#"
+      "password": "Word123*"
     }
   ]
 }

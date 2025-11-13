@@ -2,7 +2,6 @@ import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import logo from "../assets/images/nice.png";
 import {
-  UsersIcon,
   ShieldCheckIcon,
   HomeIcon,
   CalendarDaysIcon,
@@ -20,6 +19,7 @@ import {
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import Communities from "../pages/Communities";
+import { SettingsIcon } from "lucide-react";
 
 
 function Layout() {
@@ -167,8 +167,8 @@ function Layout() {
               </span>
             </li>
             <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
-              <UsersIcon className="h-4 w-4 text-[#820000]" />
-              <span className="text-[#820000] font-medium">Accessibility</span>
+              <SettingsIcon className="h-4 w-4 text-[#820000]" />
+              <span className="text-[#820000] font-medium">Settings</span>
             </li>
           </ul>
         </aside>
