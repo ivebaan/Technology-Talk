@@ -12,7 +12,7 @@ const CommunityCard = ({ title, visitors, description }) => (
 );
 
 const Communities = () => {
-  const categories = ["Academics", "Q&A", "Campus Life", "Study Buddy"];
+  const categories = ["Account", "Profile", "Accessibilitiy"];
   // const [communities, setCommunities] = useState([]);
   const [recommended, setRecommended] = useState([]);
 
@@ -26,11 +26,11 @@ const Communities = () => {
   return (
     <div className="bg-white min-h-screen text-maroon-900 p-8 max-w-5xl mx-auto">
       <h1 className="text-4xl font-bold mb-6 text-maroon-800">
-        Explore Communities
+        Settings
       </h1>
 
       {/* Category Buttons */}
-      <div className="flex flex-wrap gap-3 mb-8 ml-4">
+      <div className="flex flex-wrap gap-3 mb-8">
         {categories.map((category, index) => (
           <button
             key={index}
