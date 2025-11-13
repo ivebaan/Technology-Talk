@@ -57,29 +57,28 @@ function Login() {
       newErrors.password = "Password is required";
       valid = false;
     }
-
     setErrors(newErrors);
     if (!valid) return;
 
-    const userFound = data.find(u => u.email === email && u.password === password) 
-    if(!userFound){
-        newErrors.err = "Sorry, your password was incorrect. Please double-check your password."
-        valid = false;
-    }else{
-        alert("Login successful!");
-        navigate("/app")
-    }
-    
+    const userFound = data.find(u => u.email === email && u.password === password);
+    if (!userFound) {
+    newErrors.err = "Invalid credentials. Please try again.";
+    valid = false;
+    setErrors(newErrors);
+    } else {
+    alert("Login successful!");
     setEmail("");
     setPassword("");
-    setErrors({email: "", password: "", err: ""})
-  };
+    setErrors({ email: "", password: "", err: "" });
+    navigate("/app");
+    }
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-        {/* Right - Form */}
+        {/* Right */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
           <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
             User Login

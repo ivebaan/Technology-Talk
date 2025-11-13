@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../effects/Typewriter";
 import axios from "axios";
@@ -18,6 +18,8 @@ function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const [data, setData] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get("http://localhost:3000/users")
@@ -99,14 +101,22 @@ function Register() {
     if(existEmail){
       newErrors.exist = "Email already in use."
       valid = false;
-    }else{
-      alert(`Registered with email: ${email}`);
+    }
 
+    if(valid){
+      setConfirmPasswordColor("border-green-500");
+      setPasswordColor("border-green-500");
     }
 
     setErrors(newErrors);
     if (!valid) return;
 
+    axios.post("http://localhost:3000/users", {
+    email: email,
+    password: password
+    })
+    .then(res => {
+    console.log(res.data);
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -114,7 +124,12 @@ function Register() {
     setPasswordColor("border-gray-300");
     setConfirmPasswordColor("border-gray-300");
     setErrors({email: "", password: "", confirmPassword: "", exist: "" });
+    navigate("/login")
+    })
+    .catch(err => console.log(err));
   };
+
+    
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
@@ -157,9 +172,16 @@ function Register() {
               errors.email ? "border-red-500" : "border-gray-300"
             } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
           />
+          
           {errors.email && (
-            <p className="text-red-500 text-sm mb-2">{errors.email}</p>
+            <p className="text-red-500 text-sm mb-2 ml-2">{errors.email}</p>
+          )} 
+          {errors.exist && (
+            <p className="text-red-500 text-sm w-full mb-5 ml-2">
+              {errors.exist}
+            </p>
           )}
+        
 
           {/* Password */}
           <div className="relative w-full mb-3">
@@ -194,7 +216,7 @@ function Register() {
           )}
 
           {errors.password && (
-            <p className="text-red-500 text-sm w-full mb-2">
+            <p className="text-red-500 text-sm w-full mb-2 ml-2">
               {errors.password}
             </p>
           )}
@@ -220,7 +242,7 @@ function Register() {
           </div>
 
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm w-full mb-5">
+            <p className="text-red-500 text-sm w-full mb-5 ml-2">
               {errors.confirmPassword}
             </p>
           )}
@@ -235,11 +257,7 @@ function Register() {
             </Link>
           </p>
 
-          {errors.exist && (
-            <p className="text-red-500 text-sm w-full mb-5">
-              {errors.exist}
-            </p>
-          )}
+          
 
           <button
             onClick={handleRegister}

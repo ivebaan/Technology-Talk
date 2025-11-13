@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, NavLink } from "react-router-dom";
-import logo from "../assets/images/tech.png";
+import logo from "../assets/images/nice.png";
 import {
   UsersIcon,
   ShieldCheckIcon,
