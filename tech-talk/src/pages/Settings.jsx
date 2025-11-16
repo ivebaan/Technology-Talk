@@ -18,6 +18,15 @@ const Settings = () => {
   const [googleConnected, setGoogleConnected] = useState(false);
   const [twoFactor, setTwoFactor] = useState(false);
 
+  // Privacy states
+  const [allowFollow, setAllowFollow] = useState(true);
+  const [showInSearch, setShowInSearch] = useState(true);
+  const [chatRequests, setChatRequests] = useState("Everyone"); // dropdown for chat requests
+  const [blockedAccounts, setBlockedAccounts] = useState(["user123", "user456"]); // example blocked list
+  const [showChatRequestsDropdown, setShowChatRequestsDropdown] = useState(false);
+  const [showBlockedList, setShowBlockedList] = useState(false);
+
+
   const renderContent = () => {
     switch (activeCategory) {
       case "Account":
@@ -151,8 +160,146 @@ const Settings = () => {
       case "Privacy":
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-maroon-800">Privacy</h2>
-            <p className="text-maroon-900">Control your privacy, data usage, and visibility preferences.</p>
+            {/* Privacy Section */}
+          <div className="text-maroon-900">
+            {/* SECTION: Social interactions */}
+            <h2 className="text-xl font-bold mb-4 text-maroon-800 border-b pb-2">Social interactions</h2>
+
+            {/* Allow people to follow you */}
+            <div className="mb-4 flex justify-between items-center">
+              <div>
+                <p className="font-semibold">Allow people to follow you</p>
+                <p className="text-gray-500 text-sm">Let people follow you to see your profile posts in their home feed</p>
+              </div>
+              <label className="relative inline-block w-12 h-6">
+                <input
+                  type="checkbox"
+                  checked={allowFollow}
+                  onChange={() => setAllowFollow(!allowFollow)}
+                  className="opacity-0 w-0 h-0"
+                />
+                <span
+                  className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition ${
+                    allowFollow ? "bg-[#820000]" : "bg-gray-400"
+                  }`}
+                ></span>
+                <span
+                  className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition ${
+                    allowFollow ? "translate-x-6" : "translate-x-0"
+                  }`}
+                ></span>
+              </label>
+            </div>
+
+            {/* Who can send you chat requests */}
+            <div className="mb-4">
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => setShowChatRequestsDropdown(!showChatRequestsDropdown)}
+              >
+                <p className="font-semibold">Who can send you chat requests</p>
+                <span className="text-gray-500">{chatRequests} {showChatRequestsDropdown ? "▲" : "▼"}</span>
+              </div>
+
+              {showChatRequestsDropdown && (
+                <div className="mt-2 ml-2 flex flex-col gap-2">
+                  {["Everyone", "Friends only", "Nobody"].map((option) => (
+                    <button
+                      key={option}
+                      className={`text-left px-3 py-1 rounded hover:bg-gray-200 ${
+                        chatRequests === option ? "font-bold text-[#820000]" : ""
+                      }`}
+                      onClick={() => {
+                        setChatRequests(option);
+                        setShowChatRequestsDropdown(false);
+                      }}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                  )}
+                </div>
+
+            {/* Blocked accounts */}
+            <div className="mb-4">
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => setShowBlockedList(!showBlockedList)}
+              >
+                <p className="font-semibold">Blocked accounts</p>
+                <span className="text-gray-500">&gt;</span>
+              </div>
+
+              {showBlockedList && (
+                <div className="mt-2 ml-2 border p-2 rounded bg-gray-50 max-h-40 overflow-y-auto">
+                  {blockedAccounts.length === 0 && <p className="text-gray-500">No blocked accounts</p>}
+                  {blockedAccounts.map((user, index) => (
+                    <div key={index} className="flex justify-between items-center py-1">
+                      <span>{user}</span>
+                      <button
+                        className="text-red-600 px-2 py-0.5 rounded hover:bg-red-100"
+                        onClick={() => setBlockedAccounts(blockedAccounts.filter(u => u !== user))}
+                      >
+                        Unblock
+                      </button>
+                    </div>
+                  ))}
+                  {/* Optional: add a field to block a new account */}
+                  <input
+                    type="text"
+                    placeholder="Block new account"
+                    className="border px-2 py-1 mt-2 w-full rounded"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.target.value) {
+                        setBlockedAccounts([...blockedAccounts, e.target.value]);
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+
+            {/* SECTION: Discoverability */}
+            <h2 className="text-xl font-bold mb-4 text-maroon-800 border-b pb-2">Discoverability</h2>
+
+            {/* Show up in search results */}
+            <div className="mb-4 flex justify-between items-center">
+              <div>
+                <p className="font-semibold">Show up in search results</p>
+                <p className="text-gray-500 text-sm">Allow search engines to link to your profile</p>
+              </div>
+              <label className="relative inline-block w-12 h-6">
+                <input
+                  type="checkbox"
+                  checked={showInSearch}
+                  onChange={() => setShowInSearch(!showInSearch)}
+                  className="opacity-0 w-0 h-0"
+                />
+                <span
+                  className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition ${
+                    showInSearch ? "bg-[#820000]" : "bg-gray-400"
+                  }`}
+                ></span>
+                <span
+                  className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition ${
+                    showInSearch ? "translate-x-6" : "translate-x-0"
+                  }`}
+                ></span>
+              </label>
+            </div>
+
+            {/* SECTION: Advanced */}
+            <h2 className="text-xl font-bold mb-4 text-maroon-800 border-b pb-2">Advanced</h2>
+
+            <div className="pt-2">
+              <button className="text-red-600 font-semibold hover:underline">
+                Clear history
+              </button>
+            </div>
+          </div>
           </div>
         );
 
