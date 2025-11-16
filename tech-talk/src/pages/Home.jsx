@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Postcard from "../components/Postcard";
+import PopularCommunitiesCard from "../components/PopularCommunitiesCard";
+
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [communities, setCommunities] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/communities")
+      .then((res) => setCommunities(res.data))
+      .catch((err) => console.error("Error fetching posts:", err));
+  }, []);
 
   useEffect(() => {
     axios
@@ -52,17 +62,22 @@ function Home() {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen flex justify-center">
-      <main className="w-full max-w-2xl mt-6 space-y-4">
-        {posts.map((post) => (
-          <Postcard
-            key={post.id}
-            post={post}
-            handleVote={handleVote}
-            handleThreeDots={handleThreeDots}
-            openDropdown={openDropdown}
-          />
-        ))}
-      </main>
+      <div className="w-full max-w-6xl mt-6 flex gap-6">
+        <main className="flex-1 space-y-4">
+          {posts.map((post) => (
+            <Postcard
+              key={post.id}
+              post={post}
+              handleVote={handleVote}
+              handleThreeDots={handleThreeDots}
+              openDropdown={openDropdown}
+            />
+          ))}
+        </main>
+        <aside className="w-80">
+          <PopularCommunitiesCard communities={communities} />
+        </aside>
+      </div>
     </div>
   );
 }

@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../effects/Typewriter";
 import axios from "axios";
-
+import { UserContext } from "../context/UserContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ email: "", password: "", err:""});
-  const [data,setData] = useState([]);
+  const [errors, setErrors] = useState({ email: "", password: "", err: "" });
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const { setCurrentUser } = useContext(UserContext);
 
-   useEffect(() => {
-        axios.get("http://localhost:3000/users")
-        .then(res => setData(res.data))
-        .catch(err => console.log(err))
-    }, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/users")
+      .then((res) => setData(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
 
     if (
-      value === "" ||/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)
+      value === "" ||
+      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)
     ) {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
@@ -42,7 +45,7 @@ function Login() {
   };
 
   const handleLogin = () => {
-    const newErrors = { email: "", password: "", err: ""};
+    const newErrors = { email: "", password: "", err: "" };
     let valid = true;
 
     if (
@@ -60,24 +63,26 @@ function Login() {
     setErrors(newErrors);
     if (!valid) return;
 
-    const userFound = data.find(u => u.email === email && u.password === password);
+    const userFound = data.find(
+      (u) => u.email === email && u.password === password
+    );
     if (!userFound) {
-    newErrors.err = "Invalid credentials. Please try again.";
-    valid = false;
-    setErrors(newErrors);
+      newErrors.err = "Invalid credentials. Please try again.";
+      valid = false;
+      setErrors(newErrors);
     } else {
-    alert("Login successful!");
-    setEmail("");
-    setPassword("");
-    setErrors({ email: "", password: "", err: "" });
-    navigate("/app");
+      alert("Login successful!");
+      setEmail("");
+      setPassword("");
+      setErrors({ email: "", password: "", err: "" });
+      setCurrentUser(userFound);
+      navigate("/app/home");
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
-
         {/* Right */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
           <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">

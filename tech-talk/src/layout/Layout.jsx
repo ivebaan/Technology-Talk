@@ -1,5 +1,5 @@
-import React from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Outlet, NavLink, Link } from "react-router-dom";
 import logo from "../assets/images/nice.png";
 import {
   ShieldCheckIcon,
@@ -15,18 +15,28 @@ import {
   UserGroupIcon,
   NewspaperIcon,
   BookmarkIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "../pages/Home";
-import Communities from "../pages/Communities";
-import { SettingsIcon } from "lucide-react";
-
+import { SettingsIcon, SquarePlusIcon } from "lucide-react";
 
 function Layout() {
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="h-screen w-full bg-gray-100 relative flex flex-col">
+    <div className="h-screen w-full bg-gray-100 relative flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="h-20 flex shadow-sm justify-between bg-white px-4">
+      <div className="h-20 flex shadow-sm justify-between bg-white px-4 flex-shrink-0">
         <div className="flex items-center p-1">
           <img
             src={logo}
@@ -46,21 +56,59 @@ function Layout() {
           </div>
         </div>
         <div className="flex items-center space-x-2 p-2">
-          <button className="text-lg cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-all duration-300 font-semibold text-[#820000]">
-            + Create
-          </button>
+          <Link to="/app/create-post">
+            <button className="text-md cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-all duration-300 font-semibold text-[#820000] flex items-center gap-2">
+              <SquarePlusIcon className="h-4 w-4 text-[#820000]" />
+              Create
+            </button>
+          </Link>
+
           <div className="p-2 rounded-full hover:bg-gray-200 transition-all duration-300 cursor-pointer">
             <BellIcon className="w-7 h-7 text-[#820000]" />
           </div>
-          <div className="p-2 rounded-full hover:bg-gray-200 transition-all duration-300 cursor-pointer">
+          <div
+            ref={profileRef}
+            className="relative p-2 rounded-full hover:bg-gray-200 transition-all duration-300 cursor-pointer"
+            onClick={() => setProfileOpen(!profileOpen)}
+          >
             <UserCircleIcon className="w-10 h-10 text-[#820000]" />
+
+            {profileOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
+                <NavLink
+                  to="/app/profile"
+                  className="px-4 py-2 hover:bg-gray-100 flex items-center"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <UserIcon className="w-5 h-5 text-[#820000] mr-2" /> View
+                  Profile
+                </NavLink>
+                <NavLink
+                  to="/app/settings"
+                  className="px-4 py-2 hover:bg-gray-100 flex items-center"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <SettingsIcon className="w-5 h-5 text-[#820000] mr-2" />
+                  Settings
+                </NavLink>
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setProfileOpen(false);
+                    alert("Logging out");
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Sidebar + Main */}
-      <div className="flex flex-1">
-        <aside className="w-60 bg-white p-4 shadow-md">
+      <div className="flex flex-1 overflow-hidden">
+        <aside className="w-60 bg-white p-4 shadow-md overflow-y-auto">
           <ul className="space-y-1 w-full">
             <li>
               <NavLink
@@ -173,8 +221,8 @@ function Layout() {
           </ul>
         </aside>
 
-        {/* 🔄 Main Content */}
-        <main className="p-6 overflow-y-auto">
+        {/* Main Content (independent scroll) */}
+        <main className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>
