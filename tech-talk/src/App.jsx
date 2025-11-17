@@ -28,7 +28,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="create-post" element={<CreatePost />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="privacypolicy" element={<PrivacyPolicy />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
         </Routes>
       </BrowserRouter>

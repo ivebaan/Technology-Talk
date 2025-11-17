@@ -208,15 +208,35 @@ function Layout() {
               <NewspaperIcon className="h-4 w-4 text-[#820000]" />
               <span className="text-[#820000] font-medium">User Agreement</span>
             </li>
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
-              <ShieldCheckIcon className="h-4 w-4 text-[#820000]" />
-              <span className="text-[#820000] font-medium">
-                Privacy & Policy
-              </span>
+            <li>
+              <NavLink
+                to="/app/privacy-policy"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
+              >
+                <ShieldCheckIcon className="h-4 w-4 text-[#820000]" />
+                <span className="font-medium">Privacy & Policy</span>
+              </NavLink>
             </li>
-            <li className="flex items-center gap-2 p-3 hover:bg-gray-200 rounded-lg cursor-pointer">
-              <SettingsIcon className="h-4 w-4 text-[#820000]" />
-              <span className="text-[#820000] font-medium">Settings</span>
+            <li>
+              <NavLink
+                to="/app/settings"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? "bg-[#820000] text-white"
+                      : "hover:bg-gray-200 text-[#820000]"
+                  }`
+                }
+              >
+                <SettingsIcon className="h-4 w-4 text-[#820000]" />
+                <span className="font-medium">Settings</span>
+              </NavLink>
             </li>
           </ul>
         </aside>
