@@ -1,7 +1,7 @@
 {
   "posts": [
     {
-      "id": 1,
+      "id": "1",
       "title": "AUndang natag skwela",
       "content": "Paeta",
       "author": "u/AskPH",
@@ -11,7 +11,7 @@
       "verified": true
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Padayon gihapon ang pag skwela bisan earthquake",
       "content": "Kusog- kusog sad jud to uyoga ba. Kamusta man mo diha? Stay safe intawn mo, ilabi na ang naas mga high rise nga buildings ug mga ga work pa.",
       "author": "u/ivebaan",
@@ -21,7 +21,7 @@
       "verified": false
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Naay nakasulay og online class nga walay kuryente?",
       "content": "Lisod kaayo, nag hotspot ko sa silingan. Pero padayon gihapon basta makat-on lang.",
       "author": "u/teknoy101",
@@ -31,7 +31,7 @@
       "verified": false
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Libre internet sa plaza, legit?",
       "content": "Naay free WiFi sa city plaza daw. Naka connect ko ganiha, hinay lang pero pwede ra pang research.",
       "author": "u/cebulife",
@@ -41,7 +41,7 @@
       "verified": true
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Mga tips para di ma burnout sa college",
       "content": "Kung kapoy na, pahulay usa. Bisan 15 mins lang. Di man kinahanglan mag suffer para lang makagraduate.",
       "author": "u/studentlife",
@@ -51,7 +51,7 @@
       "verified": true
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Naay part-time job nga flexible sa oras?",
       "content": "Gusto ko mangita og work nga pwede ra after class, basin naa moy ma-recommend nga online or freelance.",
       "author": "u/workingstudent",
@@ -69,144 +69,164 @@
       "votes": 0,
       "comments": 0,
       "verified": true
+    },
+    {
+      "id": "01cf",
+      "title": "Love Donaire the boxer",
+      "content": "Best boxer/ teacher every",
+      "author": "u/teknoypogi",
+      "community": "r/Philippines",
+      "votes": 0,
+      "comments": 0,
+      "verified": true
+    },
+    {
+      "id": "887e",
+      "title": "i love donaire ",
+      "content": "best boxer / teacher",
+      "author": "u/teknoypogi",
+      "community": "r/Philippines",
+      "votes": 0,
+      "comments": 0,
+      "verified": true
     }
   ],
   "communities": [
     {
-      "id": 1,
+      "id": "1",
       "name": "CITAcademics",
       "description": "Discuss academics, tips, study guides, and class-related topics.",
       "members": 1240,
       "category": "Academics"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "HomeworkHelp",
       "description": "Need help with assignments or projects? Ask here.",
       "members": 980,
       "category": "Academics"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "ResearchCorner",
       "description": "A hub for thesis, research, and capstone discussions.",
       "members": 640,
       "category": "Academics"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "BSComputerScience",
       "description": "Everything about BS Computer Science — coding, logic, and theory.",
       "members": 1120,
       "category": "Courses"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "BSInformationTechnology",
       "description": "For BSIT students to share projects, labs, and advice.",
       "members": 1050,
       "category": "Courses"
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "BSElectricalEngineering",
       "description": "Talk circuits, power systems, and EE-related topics.",
       "members": 720,
       "category": "Courses"
     },
     {
-      "id": 7,
+      "id": "7",
       "name": "BSArchitecture",
       "description": "Share design ideas, portfolios, and rendering tips.",
       "members": 680,
       "category": "Courses"
     },
     {
-      "id": 8,
+      "id": "8",
       "name": "BSBusinessAdministration",
       "description": "Entrepreneurship, marketing, and management discussions.",
       "members": 520,
       "category": "Courses"
     },
     {
-      "id": 9,
+      "id": "9",
       "name": "BSHospitalityManagement",
       "description": "Hospitality, tourism, and customer service talk.",
       "members": 480,
       "category": "Courses"
     },
     {
-      "id": 10,
+      "id": "10",
       "name": "CITMemes",
       "description": "Post your funniest CIT-related memes and inside jokes.",
       "members": 2100,
       "category": "Campus Life"
     },
     {
-      "id": 11,
+      "id": "11",
       "name": "CITConfessions",
       "description": "Share your secrets, crushes, or rants anonymously.",
       "members": 1870,
       "category": "Campus Life"
     },
     {
-      "id": 12,
+      "id": "12",
       "name": "CITEvents",
       "description": "Stay updated with school activities and events.",
       "members": 950,
       "category": "Campus Life"
     },
     {
-      "id": 13,
+      "id": "13",
       "name": "CITDevelopers",
       "description": "A place for programmers to showcase projects and collaborate.",
       "members": 1020,
       "category": "Tech"
     },
     {
-      "id": 14,
+      "id": "14",
       "name": "CITDesigners",
       "description": "For graphic and UI/UX designers to share their works.",
       "members": 630,
       "category": "Tech"
     },
     {
-      "id": 15,
+      "id": "15",
       "name": "CITAdvice",
       "description": "Ask questions about school, career, or life in general.",
       "members": 780,
       "category": "Support"
     },
     {
-      "id": 16,
+      "id": "16",
       "name": "CITMentalHealth",
       "description": "A safe space to talk about stress, burnout, and well-being.",
       "members": 560,
       "category": "Support"
     },
     {
-      "id": 17,
+      "id": "17",
       "name": "CITMarketplace",
       "description": "Buy, sell, and trade textbooks, gadgets, and uniforms.",
       "members": 840,
       "category": "Community"
     },
     {
-      "id": 18,
+      "id": "18",
       "name": "CITClubs",
       "description": "Updates from student organizations and clubs.",
       "members": 460,
       "category": "Community"
     },
     {
-      "id": 19,
+      "id": "19",
       "name": "CITAlumni",
       "description": "Where graduates connect, mentor, and share opportunities.",
       "members": 380,
       "category": "Beyond Campus"
     },
     {
-      "id": 20,
+      "id": "20",
       "name": "CITCareers",
       "description": "Internships, OJT, and job openings for CIT students.",
       "members": 720,

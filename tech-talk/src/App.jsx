@@ -10,6 +10,7 @@ import Settings from "./pages/Settings";
 import CreatePost from "./pages/CreatePost";
 import { UserProvider } from "./context/UserContext";
 import Profile from "./pages/Profile";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="create-post" element={<CreatePost />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="privacypolicy" element={<PrivacyPolicy />} />
           </Route>
         </Routes>
       </BrowserRouter>
