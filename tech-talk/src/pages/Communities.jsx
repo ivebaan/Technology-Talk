@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CommunityCard from "../components/CommunityCard";
+import CommunityCard from "../components//cards/CommunityCard";
 
 const Communities = () => {
   const categories = [
@@ -11,7 +11,6 @@ const Communities = () => {
     "Community",
     "Beyond Campus",
   ];
-  // const [communities, setCommunities] = useState([]);
   const [recommended, setRecommended] = useState([]);
 
   useEffect(() => {
@@ -27,7 +26,6 @@ const Communities = () => {
         Explore Communities
       </h1>
 
-      {/* Category Buttons */}
       <div className="flex flex-wrap gap-3 mb-8 hover">
         {categories.map((category, index) => (
           <button

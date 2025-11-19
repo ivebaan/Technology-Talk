@@ -14,7 +14,6 @@ function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
       key={post.id}
       className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 relative"
     >
-      {/* Top info */}
       <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
         <div className="flex items-center gap-1">
           <span className="font-semibold text-gray-800">{post.author}</span>
@@ -54,20 +53,16 @@ function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
         </div>
       </div>
 
-      {/* Title */}
       <h2 className="text-[17px] font-semibold text-gray-900 mb-1">
         {post.title}
       </h2>
 
-      {/* Content */}
       <p className="text-gray-700 text-[15px] mb-3">{post.content}</p>
 
-      {/* Category tag */}
       <div className="inline-block bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded mb-3">
         {post.community}
       </div>
 
-      {/* Buttons */}
       <div className="flex items-center gap-3 text-gray-600 text-sm">
         <div
           className={`flex items-center px-3 py-1 rounded-full transition-colors duration-200 text-white ${

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Typewriter({ texts, speed = 100, pause = 1500, textSize}) {
+function Typewriter({ texts, speed = 100, pause = 1500, textSize, color}) {
   const [displayedText, setDisplayedText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -22,7 +22,7 @@ function Typewriter({ texts, speed = 100, pause = 1500, textSize}) {
     return () => clearInterval(typing);
   }, [charIndex, textIndex, texts, speed, pause]);
 
-  return <h2 className={`text-white text-center text-${textSize} font-light`}>{displayedText}</h2>;
+  return <h2 className={`${color} text-center text-${textSize} font-light`}>{displayedText}</h2>;
 
 }
 export default Typewriter;

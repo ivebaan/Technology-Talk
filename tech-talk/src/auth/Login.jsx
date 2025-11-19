@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
-import Typewriter from "../effects/Typewriter";
+import Typewriter from "../components/effects/Typewriter";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
 
@@ -173,6 +173,7 @@ function Login() {
             speed={50}
             pause={1500}
             textSize={"sm"}
+            color="text-white"
           />
         </div>
       </div>

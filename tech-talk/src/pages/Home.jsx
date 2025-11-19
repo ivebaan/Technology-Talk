@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Postcard from "../components/Postcard";
-import PopularCommunitiesCard from "../components/PopularCommunitiesCard";
+import Postcard from "../components/cards/Postcard";
+import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
 
 
 function Home() {

@@ -1,8 +1,20 @@
 import React from "react";
 import { BookOpen, Users, MessageCircle, Calendar } from "lucide-react";
-import logo from "../assets/images/tech.png";
+import logo from "../../assets/images/tech.png";
+import FeatureCard from "../cards/FeatureCard";
+import { useNavigate } from "react-router-dom";
+import Typewriter from "../effects/Typewriter";
 
 const Landing = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate("/login")
+  }
+  const handleRegister = () => {
+    navigate("/register")
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 text-gray-800">
       {/* Navbar */}
@@ -11,7 +23,7 @@ const Landing = () => {
           <img src={logo} className="object-fill cursor-pointer h-14" />
           <h1 className="text-xl font-bold text-[#820000] ">Technology-Talk</h1>
         </div>
-        <button className="bg-[#820000] cursor-pointer text-white font-medium px-4 py-2 rounded-md hover:bg-[#370000] transition">
+        <button className="bg-[#820000] cursor-pointer text-white font-medium px-4 py-2 rounded-md hover:bg-[#370000] transition" onClick={handleRegister} >
           Get Started
         </button>
       </header>
@@ -21,16 +33,25 @@ const Landing = () => {
         <h2 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#820000] to-yellow-500 my-4">
           CIT University Student Community
         </h2>
-        <p className="text-lg text-gray-700 mt-6 max-w-2xl">
-          Connect, share, and learn with fellow students at Cebu Institute of
-          Technology University
-        </p>
+        <Typewriter
+            texts={[
+              "Technology-Talk is a community where students and tech enthusiasts come together to share knowledge, explore innovations, and collaborate on meaningful projects.",
+              "Join Technology-Talk to engage in discussions about the latest technologies, discover new ideas, and connect with like-minded individuals passionate about learning and growth.",
+              "Technology-Talk empowers students to learn from each other, exchange insights, and stay updated on emerging trends in technology and innovation.",
+              "Collaborate, communicate, and innovate with Technology-Talk — a platform designed to make technology discussions interactive, engaging, and accessible to everyone.",
+              "At Technology-Talk, ideas turn into projects. Students can brainstorm, discuss, and build solutions together while expanding their tech knowledge and skills.",
+            ]}
+            speed={50}
+            pause={1500}
+            textSize={"2xl"}
+            color="text-black"
+          />
 
         <div className="mt-8 flex space-x-4">
-          <button className="bg-[#820000] text-white px-6 py-3 rounded-md font-medium hover:bg-[#370000] transition cursor-pointer">
+          <button className="bg-[#820000] text-white px-6 py-3 rounded-md font-medium hover:bg-[#370000] transition cursor-pointer" onClick={handleRegister}>
             Join Now
           </button>
-          <button className="border border-gray-300 px-6 py-3 rounded-md font-medium hover:bg-gray-200 transition cursor-pointer">
+          <button className="border border-gray-300 px-6 py-3 rounded-md font-medium hover:bg-gray-200 transition cursor-pointer" onClick={handleLogin}>
             Sign In
           </button>
         </div>
@@ -63,14 +84,6 @@ const Landing = () => {
   );
 };
 
-const FeatureCard = ({ icon, title, desc }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-left transform transition hover:scale-105 hover:shadow-md">
-    <div className="flex items-center mb-3 space-x-3">
-      <div className="p-2 bg-rose-50 rounded-full">{icon}</div>
-      <h3 className="text-lg font-semibold text-rose-800">{title}</h3>
-    </div>
-    <p className="text-gray-600 text-sm">{desc}</p>
-  </div>
-);
+
 
 export default Landing;

@@ -8,7 +8,8 @@
       "community": "r/AskPH",
       "votes": 133,
       "comments": 512,
-      "verified": true
+      "verified": true,
+      "isFavorite": false
     },
     {
       "id": "2",
@@ -18,7 +19,8 @@
       "community": "r/cebu",
       "votes": 27,
       "comments": 45,
-      "verified": false
+      "verified": false,
+      "isFavorite": true
     },
     {
       "id": "3",
@@ -28,7 +30,8 @@
       "community": "r/Philippines",
       "votes": 84,
       "comments": 23,
-      "verified": false
+      "verified": false,
+      "isFavorite": false
     },
     {
       "id": "4",
@@ -38,7 +41,8 @@
       "community": "r/cebu",
       "votes": 56,
       "comments": 19,
-      "verified": true
+      "verified": true,
+      "isFavorite": true
     },
     {
       "id": "5",
@@ -48,7 +52,8 @@
       "community": "r/collegePH",
       "votes": 102,
       "comments": 67,
-      "verified": true
+      "verified": true,
+      "isFavorite": false
     },
     {
       "id": "7",
@@ -58,7 +63,8 @@
       "community": "r/jobsPH",
       "votes": 41,
       "comments": 32,
-      "verified": false
+      "verified": false,
+      "isFavorite": false
     },
     {
       "id": "2e49",
@@ -68,27 +74,8 @@
       "community": "r/Philippines",
       "votes": 0,
       "comments": 0,
-      "verified": true
-    },
-    {
-      "id": "01cf",
-      "title": "Love Donaire the boxer",
-      "content": "Best boxer/ teacher every",
-      "author": "u/teknoypogi",
-      "community": "r/Philippines",
-      "votes": 0,
-      "comments": 0,
-      "verified": true
-    },
-    {
-      "id": "887e",
-      "title": "i love donaire ",
-      "content": "best boxer / teacher",
-      "author": "u/teknoypogi",
-      "community": "r/Philippines",
-      "votes": 0,
-      "comments": 0,
-      "verified": true
+      "verified": true,
+      "isFavorite": true
     }
   ],
   "communities": [
@@ -286,6 +273,11 @@
       "id": "2ed0",
       "email": "admin@gmail.com",
       "password": "admin"
+    },
+    {
+      "id": "f26e",
+      "email": "test@gmail.com",
+      "password": "Test123*"
     }
   ],
   "comments": [],

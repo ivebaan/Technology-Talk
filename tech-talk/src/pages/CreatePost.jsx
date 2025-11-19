@@ -54,6 +54,7 @@ export default function CreatePost() {
         votes: 0,
         comments: 0,
         verified: true,
+        isFavorite: false,
       })
       .then((res) => {
         setData(res.data);
@@ -71,7 +72,6 @@ export default function CreatePost() {
     <div className="w-full flex flex-col max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Create post</h1>
 
-      {/* Community Selector */}
       <div className="mb-6">
         <button className="flex items-center gap-2 border px-4 py-2 rounded-full hover:bg-gray-100">
           <div className="w-6 h-6 rounded-full bg-black"></div>
@@ -79,8 +79,7 @@ export default function CreatePost() {
           <span className="text-xl -mt-[2px]">▾</span>
         </button>
       </div>
-
-      {/* Tabs */}
+      
       <div className="flex gap-6 mb-4">
         {tabs.map((tab) => (
           <button

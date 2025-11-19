@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
-import Typewriter from "../effects/Typewriter";
+import Typewriter from "../components/effects/Typewriter";
 import axios from "axios";
 
 function Register() {
@@ -153,6 +153,7 @@ function Register() {
             speed={50}
             pause={1500}
             textSize="sm"
+            color="text-white"
           />
         </div>
 
