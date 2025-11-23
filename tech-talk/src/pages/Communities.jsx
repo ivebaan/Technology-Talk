@@ -3,6 +3,7 @@ import CommunityCard from "../components/cards/CommunityCard";
 
 const Communities = () => {
   const categories = [
+    "All",
     "Academics",
     "Courses",
     "Campus Life",
@@ -12,7 +13,7 @@ const Communities = () => {
     "Beyond Campus",
   ];
 
-  const [activeCategory, setActiveCategory] = useState("Academics"); 
+  const [activeCategory, setActiveCategory] = useState("All");
   const [recommended, setRecommended] = useState([]);
   const [filtered, setFiltered] = useState([]);
 
@@ -26,11 +27,8 @@ const Communities = () => {
   }, []);
 
   useEffect(() => {
-    if (activeCategory === "Courses") {
-      const result = recommended.filter(
-        (item) => item.category === "Courses"
-      );
-      setFiltered(result);
+    if (activeCategory === "All") {
+      setFiltered(recommended);
     } else {
       setFiltered(
         recommended.filter((item) => item.category === activeCategory)
@@ -44,7 +42,6 @@ const Communities = () => {
         Explore Communities
       </h1>
 
-      { }
       <div className="flex flex-wrap gap-3 mb-8">
         {categories.map((category, index) => (
           <button
@@ -61,7 +58,6 @@ const Communities = () => {
         ))}
       </div>
 
-      { }
       <h2 className="text-2xl font-semibold mb-4">
         {activeCategory} Communities
       </h2>
