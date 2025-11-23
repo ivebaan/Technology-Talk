@@ -11,7 +11,7 @@ function Profile() {
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 rounded-full bg-pink-300" />
           <div>
-            <h1 className="text-2xl font-bold">{currentUser?.email}</h1>
+            <h1 className="text-2xl font-bold">{currentUser?.displayName}</h1>
             <p className="text-gray-600 text-sm">u/Tight_Attention_8445</p>
           </div>
         </div>
