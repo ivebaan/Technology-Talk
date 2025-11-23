@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Postcard from "../components/cards/Postcard";
-import {FaCheckCircle} from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
+import cover from "../assets/images/cover.jpg";
 
 const mockCommunities = {
   citacad: {
@@ -122,11 +123,10 @@ const mockCommunities = {
   },
 };
 
-
 export default function CommunityName() {
   const { communityName } = useParams();
   const [communityData, setCommunityData] = useState(null);
-  const [joined, setJoined] = useState(false); 
+  const [joined, setJoined] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -155,38 +155,54 @@ export default function CommunityName() {
       {/* Main Content */}
       <div className="flex-1 max-w-4xl mx-auto p-6 space-y-6">
         {/* Community Header */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <CircleIcon {...communityData.icon} />
-            <div>           
-              <div className="flex">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                r/{communityData.name} 
-              </h1>
-              <span className="flex items-center text-green-600 text-xs px-2 mt-1">
-                            <FaCheckCircle size={14} /></span>
-               </div>
-              <p className="text-gray-700 text-sm mt-1">{communityData.description}</p>
-            </div>
-          </div>
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          {/* Cover Banner */}
+          <div
+            className="w-full h-32 bg-cover bg-center"
+            style={{ backgroundImage: `url(${cover})` }}
+          ></div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/app/create-post")}
-              className="bg-[#820000] text-white px-4 py-2 rounded-full hover:bg-[#a30000] transition cursor-pointer"
-            >
-              Create Post
-            </button>
-            <button
-              onClick={() => setJoined(!joined)}
-              className={`px-4 py-2 rounded-full border cursor-pointer ${
-                joined
-                  ? "bg-gray-200 border-gray-400 text-gray-700"
-                  : "bg-[#820000] text-white border-[#820000]"
-              } hover:opacity-90 transition`}
-            >
-              {joined ? "Joined" : "Join"}
-            </button>
+          {/* Content Under Banner */}
+          <div className="p-5 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <CircleIcon {...communityData.icon} />
+
+              <div>
+                <div className="flex items-center">
+                  <h1 className="text-2xl font-semibold text-gray-900">
+                    r/{communityData.name}
+                  </h1>
+                  <span className="flex items-center text-green-600 text-xs px-2 mt-1">
+                    <FaCheckCircle size={14} />
+                  </span>
+                </div>
+
+                <p className="text-gray-700 text-sm mt-1">
+                  {communityData.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate("/app/create-post")}
+                className="bg-[#820000] text-white px-4 py-2 rounded-full hover:bg-[#a30000] transition cursor-pointer"
+              >
+                Create Post
+              </button>
+
+              <button
+                onClick={() => setJoined(!joined)}
+                className={`px-4 py-2 rounded-full border cursor-pointer ${
+                  joined
+                    ? "bg-gray-200 border-gray-400 text-gray-700"
+                    : "bg-[#820000] text-white border-[#820000]"
+                } hover:opacity-90 transition`}
+              >
+                {joined ? "Joined" : "Join"}
+              </button>
+            </div>
           </div>
         </div>
 

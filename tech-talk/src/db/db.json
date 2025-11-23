@@ -260,24 +260,40 @@
   ],
   "users": [
     {
+      "displayName": "rodxd",
       "id": "2",
       "email": "rodive@gmail.com",
       "password": "rodxd"
     },
     {
+      "displayName": "cambal",
       "id": "2ed0",
       "email": "cambal@cit.edu",
       "password": "Word123*"
     },
     {
+      "displayName": "admin",
       "id": "2ed0",
       "email": "admin@gmail.com",
       "password": "admin"
     },
     {
+      "displayName": "test",
       "id": "f26e",
       "email": "test@gmail.com",
       "password": "Test123*"
+    },
+    {
+      "id": "a477",
+      "displayName": "test",
+      "email": "testing@gmail.com",
+      "password": "Password123*"
+    },
+    {
+      "id": "3c2c",
+      "displayName": "password",
+      "email": "password@gmail.com",
+      "password": "Password123*"
     }
   ],
   "comments": [],

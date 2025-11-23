@@ -6,6 +6,7 @@ import Typewriter from "../components/effects/Typewriter";
 import axios from "axios";
 
 function Register() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,7 +32,8 @@ function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    exist: ""
+    exist: "",
+    displayName:""
   });
 
   const handleEmailChange = (e) => {
@@ -42,6 +44,11 @@ function Register() {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
   };
+
+  const handleDisplayNameChange = (e) => {
+    const value = e.target.value;
+    setDisplayName(value);
+  }
 
   const checkPasswordStrength = (pwd) => {
     const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
@@ -70,9 +77,9 @@ function Register() {
       setConfirmPasswordColor("border-red-500");
     }
   };
-
+ 
   const handleRegister = () => {
-    const newErrors = { email: "", password: "", confirmPassword: "", exist: ""};
+    const newErrors = { email: "", password: "", confirmPassword: "", exist: "", displayName: ""};
     let valid = true;
 
     if (!email ||!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
@@ -98,8 +105,18 @@ function Register() {
     }
 
     const existEmail = data.find((u) => u.email === email);
+
     if(existEmail){
       newErrors.exist = "Email already in use."
+      valid = false;
+    }
+    const existDisplayName = data.find((u) => u.displayName === displayName);
+
+    if(!displayName){
+      newErrors.displayName = "Display Name is required.";
+      valid = false;
+    }else if(existDisplayName){
+      newErrors.displayName = "Display Name already exist.";
       valid = false;
     }
 
@@ -112,6 +129,7 @@ function Register() {
     if (!valid) return;
 
     axios.post("http://localhost:3000/users", {
+    displayName: displayName,
     email: email,
     password: password
     })
@@ -123,7 +141,8 @@ function Register() {
     setPasswordStrength("");
     setPasswordColor("border-gray-300");
     setConfirmPasswordColor("border-gray-300");
-    setErrors({email: "", password: "", confirmPassword: "", exist: "" });
+    setDisplayName("");
+    setErrors({email: "", password: "", confirmPassword: "", exist: "", displayName: ""});
     navigate("/login")
     })
     .catch(err => console.log(err));
@@ -162,6 +181,19 @@ function Register() {
           <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
             User Registration
           </h1>
+          {/*Display name*/ }
+          <input
+            type="text"
+            placeholder="Enter display name"
+            value={displayName}
+            onChange={handleDisplayNameChange}
+            className={`p-4 rounded-xl w-full border ${
+              errors.displayName ? "border-red-500" : "border-gray-300"
+            } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
+          />
+          {errors.displayName && (
+            <p className="text-red-500 text-sm mb-2 ml-2">{errors.displayName}</p>
+          )} 
 
           {/* Email */}
           <input
