@@ -12,7 +12,7 @@ const Communities = () => {
     "Beyond Campus",
   ];
 
-  const [activeCategory, setActiveCategory] = useState("Courses"); 
+  const [activeCategory, setActiveCategory] = useState("Academics"); 
   const [recommended, setRecommended] = useState([]);
   const [filtered, setFiltered] = useState([]);
 
