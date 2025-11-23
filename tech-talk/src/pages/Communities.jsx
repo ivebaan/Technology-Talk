@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CommunityCard from "../components//cards/CommunityCard";
+import CommunityCard from "../components/cards/CommunityCard";
 
 const Communities = () => {
   const categories = [
@@ -11,14 +11,32 @@ const Communities = () => {
     "Community",
     "Beyond Campus",
   ];
+
+  const [activeCategory, setActiveCategory] = useState("Courses"); 
   const [recommended, setRecommended] = useState([]);
+  const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/communities")
       .then((res) => res.json())
-      .then((data) => setRecommended(data))
+      .then((data) => {
+        setRecommended(data);
+      })
       .catch((err) => console.error("Error fetching data: ", err));
   }, []);
+
+  useEffect(() => {
+    if (activeCategory === "Courses") {
+      const result = recommended.filter(
+        (item) => item.category === "Courses"
+      );
+      setFiltered(result);
+    } else {
+      setFiltered(
+        recommended.filter((item) => item.category === activeCategory)
+      );
+    }
+  }, [activeCategory, recommended]);
 
   return (
     <div className="bg-white min-h-screen text-maroon-900 p-8 mx-auto">
@@ -26,11 +44,16 @@ const Communities = () => {
         Explore Communities
       </h1>
 
-      <div className="flex flex-wrap gap-3 mb-8 hover">
+      { }
+      <div className="flex flex-wrap gap-3 mb-8">
         {categories.map((category, index) => (
           <button
             key={index}
-            className={`cursor-pointer px-4 py-2 rounded-lg transition hover:bg-[#820000] hover:text-white text-[#820000] text-sm"
+            onClick={() => setActiveCategory(category)}
+            className={`cursor-pointer px-4 py-2 rounded-lg transition text-sm ${
+              activeCategory === category
+                ? "bg-[#820000] text-white"
+                : "text-[#820000] hover:bg-[#820000] hover:text-white"
             }`}
           >
             {category}
@@ -38,10 +61,13 @@ const Communities = () => {
         ))}
       </div>
 
-      {/* Recommended Section */}
-      <h2 className="text-2xl font-semibold mb-4">Recommended for you</h2>
+      { }
+      <h2 className="text-2xl font-semibold mb-4">
+        {activeCategory} Communities
+      </h2>
+
       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-        {recommended.map((item, index) => (
+        {filtered.map((item, index) => (
           <CommunityCard key={index} {...item} />
         ))}
       </div>
