@@ -3,20 +3,18 @@ import axios from "axios";
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
 
-
 function Home() {
   const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [communities, setCommunities] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:3000/communities")
       .then((res) => setCommunities(res.data))
-      .catch((err) => console.error("Error fetching posts:", err));
-  }, []);
+      .catch((err) => console.error("Error fetching communities:", err));
 
-  useEffect(() => {
     axios
       .get("http://localhost:3000/posts")
       .then((res) => setPosts(res.data))
@@ -60,6 +58,30 @@ function Home() {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
+  const handleAddToFavorites = async (postId) => {
+    const isAlreadyFavorite = favorites.includes(postId);
+
+    try {
+      if (isAlreadyFavorite) {
+        const favRes = await axios.get("http://localhost:3000/favorites");
+        const favItem = favRes.data.find((f) => f.postId === postId);
+
+        if (favItem) {
+          await axios.delete(`http://localhost:3000/favorites/${favItem.id}`);
+          setFavorites((prev) => prev.filter((id) => id !== postId));
+        }
+      } else {
+        const newFav = await axios.post("http://localhost:3000/favorites", {
+          postId,
+        });
+
+        setFavorites((prev) => [...prev, postId]);
+      }
+    } catch (err) {
+      console.error("Error updating favorites:", err);
+    }
+  };
+
   return (
     <div className="bg-[#f6f7f8] min-h-screen flex justify-center">
       <div className="w-full max-w-6xl mt-6 flex gap-6">
@@ -70,6 +92,8 @@ function Home() {
               post={post}
               handleVote={handleVote}
               handleThreeDots={handleThreeDots}
+              handleAddToFavorites={handleAddToFavorites}
+              isFavorite={favorites.includes(post.id)}
               openDropdown={openDropdown}
             />
           ))}

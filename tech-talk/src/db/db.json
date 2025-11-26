@@ -308,5 +308,14 @@
     }
   ],
   "comments": [],
-  "favorites": []
+  "favorites": [
+    {
+      "id": "9ebf",
+      "postId": "1"
+    },
+    {
+      "id": "d001",
+      "postId": "1"
+    }
+  ]
 }

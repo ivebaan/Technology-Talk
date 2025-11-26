@@ -8,7 +8,14 @@ import {
 } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 
-function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
+function Postcard({
+  post,
+  handleVote,
+  handleThreeDots,
+  openDropdown,
+  handleAddToFavorites,
+  isFavorite,
+}) {
   return (
     <div
       key={post.id}
@@ -23,7 +30,6 @@ function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
               Verified
             </span>
           )}
-          <span className="text-gray-400"></span>
         </div>
 
         <div className="relative">
@@ -45,8 +51,12 @@ function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
               <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 Delete
               </button>
-              <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                Save Post
+              <button
+                onClick={() => handleAddToFavorites(post.id)}
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-1"
+              >
+                <FaBookmark className={isFavorite ? "text-yellow-500" : ""} />
+                {isFavorite ? "Favorited" : "Save Post"}
               </button>
             </div>
           )}
@@ -102,8 +112,12 @@ function Postcard({ post, handleVote, handleThreeDots, openDropdown }) {
           <FaCommentAlt /> <span>{post.comments}</span>
         </button>
 
-        <button className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
-          <FaBookmark /> <span>Favorite</span>
+        <button
+          onClick={() => handleAddToFavorites(post.id)}
+          className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
+        >
+          <FaBookmark className={isFavorite ? "text-yellow-500" : ""} />
+          <span>{isFavorite ? "Favorited" : "Favorite"}</span>
         </button>
       </div>
     </div>
