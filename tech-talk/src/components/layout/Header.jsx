@@ -112,21 +112,25 @@ export default function Header() {
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-30">
                 <ul>
+                <Link to="/app/profile">
                   <li className="p-2 hover:bg-gray-100 cursor-pointer">
                     My Profile
                   </li>
+                </Link>
+
+                <Link to="/app/settings">
                   <li className="p-2 hover:bg-gray-100 cursor-pointer">
                     Settings
                   </li>
+                </Link>
 
-                  {/* UPDATED: Opens logout popup */}
-                  <li
-                    className="p-2 hover:bg-gray-100 cursor-pointer text-red-600"
-                    onClick={() => setShowLogout(true)}
-                  >
-                    Logout
-                  </li>
-                </ul>
+                <li
+                  className="p-2 hover:bg-gray-100 cursor-pointer text-red-600"
+                  onClick={() => setShowLogout(true)}
+                >
+                  Logout
+                </li>
+              </ul>
               </div>
             )}
           </div>
