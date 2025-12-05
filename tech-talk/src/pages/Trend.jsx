@@ -8,7 +8,7 @@ function Trend() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/posts")
+      .get("http://localhost:8081/posts/getAll")
       .then((res) => setPosts(res.data))
       .catch((err) => console.error("Error fetching posts:", err));
   }, []);

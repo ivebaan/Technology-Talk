@@ -11,12 +11,12 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/communities")
+      .get("http://localhost:8081/community/getAll")
       .then((res) => setCommunities(res.data))
       .catch((err) => console.error("Error fetching communities:", err));
 
     axios
-      .get("http://localhost:3000/posts")
+      .get("http://localhost:8081/posts/getAll")
       .then((res) => setPosts(res.data))
       .catch((err) => console.error("Error fetching posts:", err));
   }, []);
@@ -63,15 +63,15 @@ function Home() {
 
     try {
       if (isAlreadyFavorite) {
-        const favRes = await axios.get("http://localhost:3000/favorites");
+        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
         const favItem = favRes.data.find((f) => f.postId === postId);
 
         if (favItem) {
-          await axios.delete(`http://localhost:3000/favorites/${favItem.id}`);
+          await axios.delete("http://localhost:8081/favorites/delete/{id}");
           setFavorites((prev) => prev.filter((id) => id !== postId));
         }
       } else {
-        const newFav = await axios.post("http://localhost:3000/favorites", {
+        const newFav = await axios.post("http://localhost:8081/favorites/add", {
           postId,
         });
 

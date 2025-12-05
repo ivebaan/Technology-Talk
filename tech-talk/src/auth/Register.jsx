@@ -23,7 +23,7 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users")
+    axios.get("http://localhost:8081/users/getAll")
     .then(res => setData(res.data))
     .catch(err => console.log(err));
   }, [])
@@ -128,7 +128,7 @@ function Register() {
     setErrors(newErrors);
     if (!valid) return;
 
-    axios.post("http://localhost:3000/users", {
+    axios.post("http://localhost:8081/users/create", {
     displayName: displayName,
     email: email,
     password: password
@@ -145,7 +145,9 @@ function Register() {
     setErrors({email: "", password: "", confirmPassword: "", exist: "", displayName: ""});
     navigate("/login")
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+     console.error(err.response?.data || err.message);
+    });
   };
 
     
