@@ -18,7 +18,7 @@ const Communities = () => {
   const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/communities")
+    fetch("http://localhost:8081/community/getAll")
       .then((res) => res.json())
       .then((data) => {
         setRecommended(data);

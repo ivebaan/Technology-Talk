@@ -11,10 +11,10 @@ function Favorites() {
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
       try {
-        const favRes = await axios.get("http://localhost:3000/favorites");
+        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
         setFavoriteIds(favRes.data.map((fav) => fav.postId));
 
-        const postsRes = await axios.get("http://localhost:3000/posts");
+        const postsRes = await axios.get("http://localhost:8081/posts/getAll");
         setPosts(postsRes.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -34,21 +34,16 @@ function Favorites() {
 
     try {
       if (isAlreadyFavorite) {
-        // Fetch current favorites
-        const favRes = await axios.get("http://localhost:3000/favorites");
+        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
 
-        // Find the exact favorite record
         const favItem = favRes.data.find((f) => f.postId === postId);
 
         if (favItem) {
-          // Delete using the RECORD ID, NOT postId
-          await axios.delete(`http://localhost:3000/favorites/${favItem.id}`);
-
-          // Update UI
+          await axios.delete(`http://localhost:8081/favorites/delete/{id}`);
           setFavoriteIds((prev) => prev.filter((id) => id !== postId));
         }
       } else {
-        const newFav = await axios.post("http://localhost:3000/favorites", {
+        const newFav = await axios.post("http://localhost:8081/favorites/add", {
           postId,
         });
 
