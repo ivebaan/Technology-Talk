@@ -4,6 +4,22 @@ import { UserContext } from "../context/UserContext";
 function Profile() {
   const { currentUser } = useContext(UserContext);
   console.log(currentUser);
+
+  useEffect(() => {
+      const fetchFavoritesAndPosts = async () => {
+        try {
+        const favRes = getAllFavorites();
+          setFavoriteIds(favRes.data.map((fav) => fav.postId));
+  
+          const postsRes = getAllPosts();
+          setPosts(postsRes.data);
+        } catch (err) {
+          console.error("Error fetching data:", err);
+        }
+      };
+  
+      fetchFavoritesAndPosts();
+    }, []);
   return (
     <div className="w-full min-h-screen bg-white text-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
@@ -12,7 +28,7 @@ function Profile() {
           <div className="w-16 h-16 rounded-full bg-pink-300" />
           <div>
             <h1 className="text-2xl font-bold">{currentUser?.displayName}</h1>
-            <p className="text-gray-600 text-sm">u/Tight_Attention_8445</p>
+            <p className="text-gray-600 text-sm">{currentUser?.email}</p>
           </div>
         </div>
 
@@ -24,10 +40,6 @@ function Profile() {
           <button>Overview</button>
           <button>Comments</button>
           <button>Saved</button>
-          <button>History</button>
-          <button>Hidden</button>
-          <button>Upvoted</button>
-          <button>Downvoted</button>
         </div>
 
         {/* Create Post + Filter */}

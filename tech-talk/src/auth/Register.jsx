@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../components/effects/Typewriter";
-import axios from "axios";
+import { getAllUsers, createUser } from "../api/api";
 
 function Register() {
   const [displayName, setDisplayName] = useState("");
@@ -13,7 +13,8 @@ function Register() {
 
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordColor, setPasswordColor] = useState("border-gray-300");
-  const [confirmPasswordColor, setConfirmPasswordColor] = useState("border-gray-300");
+  const [confirmPasswordColor, setConfirmPasswordColor] =
+    useState("border-gray-300");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -23,24 +24,27 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:8081/users/getAll")
-    .then(res => setData(res.data))
-    .catch(err => console.log(err));
-  }, [])
+    getAllUsers()
+      .then((res) => setData(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   const [errors, setErrors] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     exist: "",
-    displayName:""
+    displayName: "",
   });
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
 
-    if (value === "" ||/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)) {
+    if (
+      value === "" ||
+      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)
+    ) {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
   };
@@ -48,7 +52,7 @@ function Register() {
   const handleDisplayNameChange = (e) => {
     const value = e.target.value;
     setDisplayName(value);
-  }
+  };
 
   const checkPasswordStrength = (pwd) => {
     const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
@@ -77,12 +81,21 @@ function Register() {
       setConfirmPasswordColor("border-red-500");
     }
   };
- 
+
   const handleRegister = () => {
-    const newErrors = { email: "", password: "", confirmPassword: "", exist: "", displayName: ""};
+    const newErrors = {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      exist: "",
+      displayName: "",
+    };
     let valid = true;
 
-    if (!email ||!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+    if (
+      !email ||
+      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)
+    ) {
       newErrors.email = "Please enter a valid email address";
       valid = false;
     }
@@ -106,21 +119,21 @@ function Register() {
 
     const existEmail = data.find((u) => u.email === email);
 
-    if(existEmail){
-      newErrors.exist = "Email already in use."
+    if (existEmail) {
+      newErrors.exist = "Email already in use.";
       valid = false;
     }
     const existDisplayName = data.find((u) => u.displayName === displayName);
 
-    if(!displayName){
+    if (!displayName) {
       newErrors.displayName = "Display Name is required.";
       valid = false;
-    }else if(existDisplayName){
+    } else if (existDisplayName) {
       newErrors.displayName = "Display Name already exist.";
       valid = false;
     }
 
-    if(valid){
+    if (valid) {
       setConfirmPasswordColor("border-green-500");
       setPasswordColor("border-green-500");
     }
@@ -128,34 +141,37 @@ function Register() {
     setErrors(newErrors);
     if (!valid) return;
 
-    axios.post("http://localhost:8081/users/create", {
-    displayName: displayName,
-    email: email,
-    password: password
+    createUser({
+      displayName: displayName,
+      email: email,
+      password: password,
     })
-    .then(res => {
-    console.log(res.data);
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setPasswordStrength("");
-    setPasswordColor("border-gray-300");
-    setConfirmPasswordColor("border-gray-300");
-    setDisplayName("");
-    setErrors({email: "", password: "", confirmPassword: "", exist: "", displayName: ""});
-    navigate("/login")
-    })
-    .catch(err => {
-     console.error(err.response?.data || err.message);
-    });
+      .then((res) => {
+        console.log(res.data);
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setPasswordStrength("");
+        setPasswordColor("border-gray-300");
+        setConfirmPasswordColor("border-gray-300");
+        setDisplayName("");
+        setErrors({
+          email: "",
+          password: "",
+          confirmPassword: "",
+          exist: "",
+          displayName: "",
+        });
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.error(err.response?.data || err.message);
+      });
   };
-
-    
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
-
         {/* Left */}
         <div className="hidden md:flex w-1/2 bg-[#410505dc] text-white flex-col items-center p-10">
           <img src={pic} className="cursor-pointer max-w-1/3 mb-11" />
@@ -183,7 +199,7 @@ function Register() {
           <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
             User Registration
           </h1>
-          {/*Display name*/ }
+          {/*Display name*/}
           <input
             type="text"
             placeholder="Enter display name"
@@ -194,8 +210,10 @@ function Register() {
             } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
           />
           {errors.displayName && (
-            <p className="text-red-500 text-sm mb-2 ml-2">{errors.displayName}</p>
-          )} 
+            <p className="text-red-500 text-sm mb-2 ml-2">
+              {errors.displayName}
+            </p>
+          )}
 
           {/* Email */}
           <input
@@ -207,16 +225,15 @@ function Register() {
               errors.email ? "border-red-500" : "border-gray-300"
             } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
           />
-          
+
           {errors.email && (
             <p className="text-red-500 text-sm mb-2 ml-2">{errors.email}</p>
-          )} 
+          )}
           {errors.exist && (
             <p className="text-red-500 text-sm w-full mb-5 ml-2">
               {errors.exist}
             </p>
           )}
-        
 
           {/* Password */}
           <div className="relative w-full mb-3">
@@ -291,8 +308,6 @@ function Register() {
               Login
             </Link>
           </p>
-
-          
 
           <button
             onClick={handleRegister}

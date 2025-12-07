@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CommunityCard from "../components/cards/CommunityCard";
+import { getAllCommunities } from "../api/api";
 
 const Communities = () => {
   const categories = [
@@ -18,7 +19,7 @@ const Communities = () => {
   const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8081/community/getAll")
+    getAllCommunities()
       .then((res) => res.json())
       .then((data) => {
         setRecommended(data);

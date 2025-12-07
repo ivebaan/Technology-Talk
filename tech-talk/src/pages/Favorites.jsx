@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Postcard from "../components/cards/Postcard";
+import { addToFavorites, deleteFavoriteById, getAllFavorites, getAllPosts } from "../api/api";
 
 function Favorites() {
   const [posts, setPosts] = useState([]);
@@ -11,10 +12,10 @@ function Favorites() {
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
       try {
-        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
+      const favRes = getAllFavorites();
         setFavoriteIds(favRes.data.map((fav) => fav.postId));
 
-        const postsRes = await axios.get("http://localhost:8081/posts/getAll");
+        const postsRes = getAllPosts();
         setPosts(postsRes.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -34,16 +35,16 @@ function Favorites() {
 
     try {
       if (isAlreadyFavorite) {
-        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
+        const favRes = getAllFavorites();
 
         const favItem = favRes.data.find((f) => f.postId === postId);
 
         if (favItem) {
-          await axios.delete(`http://localhost:8081/favorites/delete/{id}`);
+          deleteFavoriteById(favItem.id);
           setFavoriteIds((prev) => prev.filter((id) => id !== postId));
         }
       } else {
-        const newFav = await axios.post("http://localhost:8081/favorites/add", {
+        const newFav = addToFavorites({
           postId,
         });
 
