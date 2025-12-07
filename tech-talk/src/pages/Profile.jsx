@@ -4,22 +4,6 @@ import { UserContext } from "../context/UserContext";
 function Profile() {
   const { currentUser } = useContext(UserContext);
   console.log(currentUser);
-
-  useEffect(() => {
-      const fetchFavoritesAndPosts = async () => {
-        try {
-        const favRes = getAllFavorites();
-          setFavoriteIds(favRes.data.map((fav) => fav.postId));
-  
-          const postsRes = getAllPosts();
-          setPosts(postsRes.data);
-        } catch (err) {
-          console.error("Error fetching data:", err);
-        }
-      };
-  
-      fetchFavoritesAndPosts();
-    }, []);
   return (
     <div className="w-full min-h-screen bg-white text-gray-900 p-6">
       <div className="max-w-4xl mx-auto">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/nice.png";
 import {
@@ -9,13 +9,18 @@ import {
 import { SquarePlusIcon } from "lucide-react";
 import axios from "axios";
 import LogoutConfirmation from "../../pages/LogoutConfirmation";
+import ProfileMenu from "./ProfileMenu";
+import { UserContext } from "../../context/UserContext";
 
 export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const profileRef = useRef(null);
+  const createRef = useRef(null);
   const [data, setData] = useState([]);
   const [showLogout, setShowLogout] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     axios
@@ -36,6 +41,9 @@ export default function Header() {
     function handleClickOutside(event) {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setProfileOpen(false);
+      }
+      if (createRef.current && !createRef.current.contains(event.target)) {
+        setCreateOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -86,13 +94,37 @@ export default function Header() {
 
         {/* Right buttons */}
         <div className="flex items-center space-x-2 p-2">
-          {/* Create */}
-          <Link to="/app/create-post">
-            <button className="text-md cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-all duration-300 font-semibold text-[#820000] flex items-center gap-2">
+          {/* Create dropdown */}
+          <div ref={createRef} className="relative">
+            <button
+              onClick={() => setCreateOpen((s) => !s)}
+              className="text-md cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-all duration-300 font-semibold text-[#820000] flex items-center gap-2"
+            >
               <SquarePlusIcon className="h-4 w-4 text-[#820000]" />
               Create
             </button>
-          </Link>
+
+            {createOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-40">
+                <Link to="/app/create-post">
+                  <div
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => setCreateOpen(false)}
+                  >
+                    Create Post
+                  </div>
+                </Link>
+                <Link to="/app/create-community">
+                  <div
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => setCreateOpen(false)}
+                  >
+                    Create Community
+                  </div>
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Notifications */}
           <Link to="/app/notifications">
@@ -110,28 +142,13 @@ export default function Header() {
             <UserCircleIcon className="w-10 h-10 text-[#820000]" />
 
             {profileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-30">
-                <ul>
-                <Link to="/app/profile">
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">
-                    My Profile
-                  </li>
-                </Link>
-
-                <Link to="/app/settings">
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">
-                    Settings
-                  </li>
-                </Link>
-
-                <li
-                  className="p-2 hover:bg-gray-100 cursor-pointer text-red-600"
-                  onClick={() => setShowLogout(true)}
-                >
-                  Logout
-                </li>
-              </ul>
-              </div>
+              <ProfileMenu
+                open={profileOpen}
+                setOpen={setProfileOpen}
+                profileRef={profileRef}
+                user={currentUser}
+                onSignOut={() => setShowLogout(true)}
+              />
             )}
           </div>
         </div>

@@ -8,6 +8,7 @@ import Communities from "./pages/Communities";
 import Landing from "./components/layout/Landing";
 import Settings from "./pages/Settings";
 import CreatePost from "./pages/CreatePost";
+import CreateCommunities from "./pages/CreateCommunities";
 import { UserProvider } from "./context/UserContext";
 import Profile from "./pages/Profile";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -33,6 +34,7 @@ function App() {
             <Route path="communities" element={<Communities />} />
             <Route path="settings" element={<Settings />} />
             <Route path="create-post" element={<CreatePost />} />
+            <Route path="create-community" element={<CreateCommunities />} />
             <Route path="profile" element={<Profile />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="notifications" element={<Notifications/>}/>

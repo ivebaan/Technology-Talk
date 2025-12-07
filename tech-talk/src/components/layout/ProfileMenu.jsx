@@ -1,40 +1,69 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { UserIcon } from "@heroicons/react/24/solid";
-import { SettingsIcon } from "lucide-react";
+import { User, HelpCircle, BookOpen, LogOut } from "lucide-react";
 
-function ProfileMenu({ open, setOpen, profileRef }) {
+function ProfileMenu({ open, setOpen, profileRef, user, onSignOut }) {
   if (!open) return null;
+
+  const name = (user && user.name) || "Michael Cambal";
+  const email = (user && user.email) || "cambal@cit.edu";
 
   return (
     <div
-      className="absolute right-6 top-20 w-48 bg-white shadow-lg rounded-md z-50"
+      className="absolute right-0 mt-2 w-64 bg-white shadow-md rounded-lg z-50 border"
       ref={profileRef}
+      role="menu"
+      aria-label="Profile menu"
     >
+      <div className="px-4 py-3">
+        <div className="text-sm font-semibold text-gray-900">{name}</div>
+        <div className="text-xs text-gray-500 mt-1">{email}</div>
+      </div>
+
+      <div className="border-t" />
+
       <NavLink
         to="/app/profile"
-        className="px-4 py-2 hover:bg-gray-100 flex items-center"
+        className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
         onClick={() => setOpen(false)}
       >
-        <UserIcon className="w-5 h-5 text-[#820000] mr-2" /> View Profile
+        <User className="w-5 h-5 text-gray-600 mr-3" />
+        <span className="text-sm">Profile Settings</span>
       </NavLink>
 
       <NavLink
-        to="/app/settings"
-        className="px-4 py-2 hover:bg-gray-100 flex items-center"
+        to="/app/help"
+        className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
         onClick={() => setOpen(false)}
       >
-        <SettingsIcon className="w-5 h-5 text-[#820000] mr-2" /> Settings
+        <HelpCircle className="w-5 h-5 text-gray-600 mr-3" />
+        <span className="text-sm">Help & Support</span>
       </NavLink>
 
+      <NavLink
+        to="/app/faq"
+        className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
+        onClick={() => setOpen(false)}
+      >
+        <BookOpen className="w-5 h-5 text-gray-600 mr-3" />
+        <span className="text-sm">FAQ</span>
+      </NavLink>
+
+      <div className="border-t my-1" />
+
       <button
-        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center text-gray-800"
         onClick={() => {
           setOpen(false);
-          alert("Logging out");
+          if (typeof onSignOut === "function") {
+            onSignOut();
+            return;
+          }
+          if (typeof window !== "undefined") window.location.href = "/logout";
         }}
       >
-        Logout
+        <LogOut className="w-5 h-5 text-gray-600 mr-3" />
+        <span className="text-sm">Sign Out</span>
       </button>
     </div>
   );
