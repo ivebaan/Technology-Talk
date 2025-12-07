@@ -4,6 +4,7 @@ import Postcard from "../components/cards/Postcard";
 import axios from "axios";
 import { FaCheckCircle } from "react-icons/fa";
 import cover from "../assets/images/cover.jpg";
+import { getCommunityByName } from "../api/api";
 
 export default function CommunityName() {
   const { communityName } = useParams(); // URL param: /r/something
@@ -16,7 +17,7 @@ export default function CommunityName() {
     setLoading(true);
 
     axios
-      .get(`http://localhost:8081/community/name/${communityName}`)
+      getCommunityByName(communityName)
       .then((res) => {
         setCommunityData(res.data);
         setLoading(false);

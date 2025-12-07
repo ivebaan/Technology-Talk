@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import {
+  getAllCommunities,
+  getAllPosts,
+  getAllFavorites,
+  deleteFavoriteById,
+  addToFavorites,
+} from "../api/api";
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
 
@@ -10,13 +16,11 @@ function Home() {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8081/community/getAll")
+    getAllCommunities()
       .then((res) => setCommunities(res.data))
       .catch((err) => console.error("Error fetching communities:", err));
 
-    axios
-      .get("http://localhost:8081/posts/getAll")
+    getAllPosts()
       .then((res) => setPosts(res.data))
       .catch((err) => console.error("Error fetching posts:", err));
   }, []);
@@ -63,18 +67,17 @@ function Home() {
 
     try {
       if (isAlreadyFavorite) {
-        const favRes = await axios.get("http://localhost:8081/favorites/getAll");
+        const favRes = getAllFavorites();
         const favItem = favRes.data.find((f) => f.postId === postId);
 
         if (favItem) {
-          await axios.delete("http://localhost:8081/favorites/delete/{id}");
+          deleteFavoriteById(favItem.id);
           setFavorites((prev) => prev.filter((id) => id !== postId));
         }
       } else {
-        const newFav = await axios.post("http://localhost:8081/favorites/add", {
+        const newFave = addToFavorites({
           postId,
         });
-
         setFavorites((prev) => [...prev, postId]);
       }
     } catch (err) {

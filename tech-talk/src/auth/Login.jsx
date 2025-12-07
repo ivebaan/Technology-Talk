@@ -3,7 +3,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../components/effects/Typewriter";
-import axios from "axios";
+import{ getAllUsers } from "../api/api";
 import { UserContext } from "../context/UserContext";
 
 function Login() {
@@ -17,8 +17,7 @@ function Login() {
   const { setCurrentUser } = useContext(UserContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8081/users/getAll")
+      getAllUsers()
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);

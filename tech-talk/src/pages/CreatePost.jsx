@@ -10,11 +10,11 @@ import {
   Code,
   Quote,
 } from "lucide-react";
-import axios from "axios";
-import { UserContext } from "../context/UserContext"; 
+import { createPost, getAllCommunities } from "../api/api";
+import { UserContext } from "../context/UserContext";
 
 export default function CreatePost() {
-  const { currentUser } = useContext(UserContext);  
+  const { currentUser } = useContext(UserContext);
 
   const [activeTab, setActiveTab] = useState("text");
   const [title, setTitle] = useState("");
@@ -24,15 +24,15 @@ export default function CreatePost() {
   const [contentColor, setContentColor] = useState("border-gray-300");
 
   const [communities, setCommunities] = useState([]);
-  const [selectedCommunity, setSelectedCommunity] = useState("Select a community");
+  const [selectedCommunity, setSelectedCommunity] =
+    useState("Select a community");
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const editorRef = useRef(null);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8081/community/getAll")
+    getAllCommunities()
       .then((res) => setCommunities(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -75,13 +75,13 @@ export default function CreatePost() {
     setErrors(newErrors);
     if (!valid) return;
 
-    axios
-      .post("http://localhost:8081/posts/create", {
-        title: title,
-        content: content,
-        userId: currentUser.id,      
-        communityId: selectedCommunityId,
-      })
+    axios;
+    createPost({
+      title: title,
+      content: content,
+      userId: currentUser.id,
+      communityId: selectedCommunityId,
+    })
       .then(() => {
         setTitle("");
         setContent("");
@@ -144,7 +144,9 @@ export default function CreatePost() {
       </div>
 
       {/* Title Input */}
-      <div className={`rounded-xl p-3 mb-2 border ${titleColor} hover:border-black`}>
+      <div
+        className={`rounded-xl p-3 mb-2 border ${titleColor} hover:border-black`}
+      >
         <input
           type="text"
           placeholder="Title*"
@@ -153,16 +155,29 @@ export default function CreatePost() {
           maxLength={300}
           className="w-full outline-none"
         />
-        <div className="text-xs text-gray-400 text-right">{title.length}/300</div>
+        <div className="text-xs text-gray-400 text-right">
+          {title.length}/300
+        </div>
       </div>
       <p className="text-red-500 text-sm w-full mb-2 pl-2">{errors.title}</p>
 
       {/* CONTENT EDITOR */}
-      <div className={`border rounded-xl overflow-hidden ${contentColor} hover:border-black`}>
+      <div
+        className={`border rounded-xl overflow-hidden ${contentColor} hover:border-black`}
+      >
         <div className="flex gap-3 px-3 py-2 border-b bg-gray-50 text-gray-700 text-sm">
-          <Bold className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("bold")} />
-          <Italic className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("italic")} />
-          <Underline className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("underline")} />
+          <Bold
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("bold")}
+          />
+          <Italic
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("italic")}
+          />
+          <Underline
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("underline")}
+          />
           <LinkIcon
             className="w-4 h-4 cursor-pointer"
             onClick={() => {
@@ -177,10 +192,22 @@ export default function CreatePost() {
               if (url) applyFormat("insertImage", url);
             }}
           />
-          <List className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("insertUnorderedList")} />
-          <ListOrdered className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("insertOrderedList")} />
-          <Quote className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("formatBlock", "blockquote")} />
-          <Code className="w-4 h-4 cursor-pointer" onClick={() => applyFormat("formatBlock", "pre")} />
+          <List
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("insertUnorderedList")}
+          />
+          <ListOrdered
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("insertOrderedList")}
+          />
+          <Quote
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("formatBlock", "blockquote")}
+          />
+          <Code
+            className="w-4 h-4 cursor-pointer"
+            onClick={() => applyFormat("formatBlock", "pre")}
+          />
         </div>
 
         <div
