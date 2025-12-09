@@ -1,29 +1,41 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Postcard from "../components/cards/Postcard";
-import { addToFavorites, deleteFavoriteById, getAllFavorites, getAllPosts } from "../api/api";
+import {
+  getAllFavorites,
+  getAllPosts,
+  addToFavorites,
+  deleteFavoriteById,
+} from "../api/api";
 
 function Favorites() {
   const [posts, setPosts] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  // Fetch favorites + posts
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
       try {
-      const favRes = getAllFavorites();
-        setFavoriteIds(favRes.data.map((fav) => fav.postId));
+        const [postsRes, favRes] = await Promise.all([
+          getAllPosts(),
+          getAllFavorites(),
+        ]);
 
-        const postsRes = getAllPosts();
         setPosts(postsRes.data);
+
+        const userFavs = favRes.data
+          .filter((f) => f.post && f.user?.id === userId)
+          .map((f) => f.post.id);
+
+        setFavoriteIds(userFavs);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Error fetching favorites:", err);
       }
     };
 
     fetchFavoritesAndPosts();
-  }, []);
+  }, [userId]);
 
   const handleThreeDots = (e, id) => {
     e.stopPropagation();
@@ -31,23 +43,19 @@ function Favorites() {
   };
 
   const handleAddToFavorites = async (postId) => {
-    const isAlreadyFavorite = favoriteIds.includes(postId);
+    if (!userId) return;
 
     try {
-      if (isAlreadyFavorite) {
-        const favRes = getAllFavorites();
-
-        const favItem = favRes.data.find((f) => f.postId === postId);
-
-        if (favItem) {
-          deleteFavoriteById(favItem.id);
-          setFavoriteIds((prev) => prev.filter((id) => id !== postId));
-        }
+      const isFav = favoriteIds.includes(postId);
+      if (isFav) {
+        const favRes = await getAllFavorites();
+        const favItem = favRes.data.find(
+          (f) => f.post?.id === postId && f.user?.id === userId
+        );
+        if (favItem) await deleteFavoriteById(favItem.favoriteId);
+        setFavoriteIds((prev) => prev.filter((id) => id !== postId));
       } else {
-        const newFav = addToFavorites({
-          postId,
-        });
-
+        await addToFavorites(postId, userId);
         setFavoriteIds((prev) => [...prev, postId]);
       }
     } catch (err) {
@@ -55,7 +63,6 @@ function Favorites() {
     }
   };
 
-  // List only posts that match favorite IDs
   const favoritePosts = posts.filter((post) => favoriteIds.includes(post.id));
 
   return (

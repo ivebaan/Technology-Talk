@@ -3,8 +3,9 @@ import {
   getAllCommunities,
   getAllPosts,
   getAllFavorites,
-  deleteFavoriteById,
   addToFavorites,
+  deleteFavoriteById,
+  votePost,
 } from "../api/api";
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
@@ -15,71 +16,122 @@ function Home() {
   const [communities, setCommunities] = useState([]);
   const [favorites, setFavorites] = useState([]);
 
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+
+  // --- Fetch data on mount ---
   useEffect(() => {
-    getAllCommunities()
-      .then((res) => setCommunities(res.data))
-      .catch((err) => console.error("Error fetching communities:", err));
+    const fetchData = async () => {
+      try {
+        const [communityRes, postsRes, favRes] = await Promise.all([
+          getAllCommunities(),
+          getAllPosts(),
+          getAllFavorites(),
+        ]);
 
-    getAllPosts()
-      .then((res) => setPosts(res.data))
-      .catch((err) => console.error("Error fetching posts:", err));
-  }, []);
+        setCommunities(communityRes.data);
 
-  const handleVote = (id, type) => {
-    setPosts(
-      posts.map((post) => {
-        if (post.id === id) {
-          let updatedVotes = post.votes;
+        setPosts(
+          postsRes.data
+            .map((post) => ({
+              ...post,
+              voteStatus: post.voteStatus || null,
+            }))
+            .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated))
+        );
+
+        const userFavs = favRes.data
+          .filter((f) => f.post && f.user?.id === userId)
+          .map((f) => f.post.id);
+
+        setFavorites(userFavs);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  // --- Handle voting ---
+  const handleVote = async (postId, type) => {
+    if (!userId) return;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === postId) {
+          let newVotes = post.votes;
           let newStatus = post.voteStatus;
 
           if (type === "up") {
             if (post.voteStatus === "up") {
-              updatedVotes -= 1;
+              newVotes -= 1;
               newStatus = null;
             } else {
-              updatedVotes += post.voteStatus === "down" ? 2 : 1;
+              newVotes += post.voteStatus === "down" ? 2 : 1;
               newStatus = "up";
             }
           } else if (type === "down") {
             if (post.voteStatus === "down") {
-              updatedVotes += 1;
+              newVotes += 1;
               newStatus = null;
             } else {
-              updatedVotes -= post.voteStatus === "up" ? 2 : 1;
+              newVotes -= post.voteStatus === "up" ? 2 : 1;
               newStatus = "down";
             }
           }
 
-          return { ...post, votes: updatedVotes, voteStatus: newStatus };
+          return { ...post, votes: newVotes, voteStatus: newStatus };
         }
         return post;
       })
     );
+
+    try {
+      const res = await votePost(postId, type, userId);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? { ...post, votes: res.data.votes, voteStatus: type }
+            : post
+        )
+      );
+    } catch (err) {
+      console.error("Error saving vote:", err);
+    }
   };
 
+  // --- Handle three-dots menu ---
   const handleThreeDots = (e, id) => {
     e.stopPropagation();
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
+  // --- Handle add/remove favorites ---
   const handleAddToFavorites = async (postId) => {
-    const isAlreadyFavorite = favorites.includes(postId);
-
     try {
-      if (isAlreadyFavorite) {
-        const favRes = getAllFavorites();
-        const favItem = favRes.data.find((f) => f.postId === postId);
+      const userObj = localStorage.getItem("user");
+      if (!userObj) return;
+      const userId = JSON.parse(userObj).id;
 
-        if (favItem) {
-          deleteFavoriteById(favItem.id);
-          setFavorites((prev) => prev.filter((id) => id !== postId));
-        }
+      const isAlreadyFavorite = favorites.includes(postId);
+
+      if (isAlreadyFavorite) {
+        const favRes = await getAllFavorites();
+        const favItem = favRes.data.find(
+          (f) => f.post && f.post.id === postId && f.user?.id === userId
+        );
+        if (favItem) await deleteFavoriteById(favItem.favoriteId);
       } else {
-        const newFave = addToFavorites({
-          postId,
-        });
-        setFavorites((prev) => [...prev, postId]);
+        await addToFavorites(postId, userId);
       }
+
+      // Refresh favorites
+      const updatedFavRes = await getAllFavorites();
+      const updatedUserFavs = updatedFavRes.data
+        .filter((f) => f.post && f.user?.id === userId)
+        .map((f) => f.post.id);
+
+      setFavorites(updatedUserFavs);
     } catch (err) {
       console.error("Error updating favorites:", err);
     }
@@ -101,6 +153,7 @@ function Home() {
             />
           ))}
         </main>
+
         <aside className="w-80">
           <PopularCommunitiesCard communities={communities} />
         </aside>

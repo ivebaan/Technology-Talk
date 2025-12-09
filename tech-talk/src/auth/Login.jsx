@@ -1,35 +1,23 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../components/effects/Typewriter";
-import{ getAllUsers } from "../api/api";
 import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "", err: "" });
-  const [data, setData] = useState([]);
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(UserContext);
-
-  useEffect(() => {
-      getAllUsers()
-      .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
-  }, []);
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
-
-    if (
-      value === "" ||
-      /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)
-    ) {
+    if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value)) {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
   };
@@ -37,13 +25,12 @@ function Login() {
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
-
     if (value !== "") {
       setErrors((prev) => ({ ...prev, password: "" }));
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const newErrors = { email: "", password: "", err: "" };
     let valid = true;
 
@@ -54,41 +41,41 @@ function Login() {
       newErrors.email = "Please enter a valid email address";
       valid = false;
     }
-
     if (!password) {
       newErrors.password = "Password is required";
       valid = false;
     }
+
     setErrors(newErrors);
     if (!valid) return;
 
-    const userFound = data.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (!userFound) {
-      newErrors.err = "Invalid credentials. Please try again.";
-      valid = false;
-      setErrors(newErrors);
-    } else {
-      alert("Login successful!");
+    try {
+      const res = await axios.post("http://localhost:8081/users/login", {
+        email,
+        password,
+      });
+      setCurrentUser(res.data);
       setEmail("");
       setPassword("");
       setErrors({ email: "", password: "", err: "" });
-      setCurrentUser(userFound);
       navigate("/app/home");
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        err: "Invalid credentials. Please try again.",
+      }));
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* Right */}
+        {/* Right Side - Form */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
           <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
             User Login
           </h1>
 
-          {/* Email */}
           <input
             type="email"
             placeholder="Enter Institutional Email"
@@ -97,10 +84,9 @@ function Login() {
             className="p-4 rounded-xl w-full border border-gray-300 text-gray-800 mb-1 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition"
           />
           {errors.email && (
-            <p className="text-red-500 text-sm mb-2 ">{errors.email}</p>
+            <p className="text-red-500 text-sm mb-2">{errors.email}</p>
           )}
 
-          {/* Password */}
           <div className="relative w-full mb-2">
             <input
               type={showPassword ? "text" : "password"}
@@ -117,9 +103,7 @@ function Login() {
             </span>
           </div>
           {errors.password && (
-            <p className="text-red-500 text-sm w-full mb-2">
-              {errors.password}
-            </p>
+            <p className="text-red-500 text-sm mb-2">{errors.password}</p>
           )}
 
           <p className="text-sm text-left w-full text-gray-700 mb-2">
@@ -132,7 +116,7 @@ function Login() {
             </Link>
           </p>
 
-          <p className="text-red-500 text-sm my-4 ">{errors.err}</p>
+          <p className="text-red-500 text-sm my-4">{errors.err}</p>
 
           <button
             onClick={handleLogin}
@@ -154,7 +138,7 @@ function Login() {
           </p>
         </div>
 
-        {/* Left - Branding */}
+        {/* Left Side - Branding */}
         <div className="hidden md:flex w-1/2 bg-[#410505dc] text-white flex-col items-center p-10">
           <img src={pic} className="cursor-pointer max-w-1/3 mb-11" />
           <h1 className="text-3xl font-bold my-5 text-center">

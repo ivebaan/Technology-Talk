@@ -69,10 +69,14 @@ function Trend() {
                 key={post.id}
                 className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition"
               >
-                <span className="text-gray-600 text-sm">{post.community}</span>
+                {/* Fix: render name, not the object */}
+                <span className="text-gray-600 text-sm">
+                  {post.community?.name || "Unknown Community"}
+                </span>
                 <h3 className="text-gray-900 font-medium">{post.title}</h3>
                 <p className="text-gray-500 text-sm">
-                  by {post.author} • {post.comments} comments
+                  by {post.createdBy?.username || "Unknown"} •{" "}
+                  {post.comments || 0} comments
                 </p>
               </div>
             ))}

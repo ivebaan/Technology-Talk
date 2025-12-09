@@ -17,13 +17,15 @@ import CommunityName from "./pages/CommunityName";
 import Trend from "./pages/Trend";
 import Favorites from "./pages/Favorites";
 import UserAgreement from "./pages/UserAgreement";
+import PostPage from "./pages/PostPage";
+import PostEdit from "./pages/PostEdit";
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          <Route index element={<Landing/>}/>
+          <Route index element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/technology" element={<Landing />} />
@@ -37,13 +39,16 @@ function App() {
             <Route path="create-community" element={<CreateCommunities />} />
             <Route path="profile" element={<Profile />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="notifications" element={<Notifications/>}/>
-            <Route path=":communityName" element={<CommunityName />} />
-            <Route path="trending" element={<Trend/>} />
-            <Route path="favorites" element={<Favorites/>} />
-            <Route path="user-agreement" element={<UserAgreement/>} />
+            {/* <Route path="notifications" element={<Notifications />} /> */}
+
+            <Route path="r/:communityName" element={<CommunityName />} />
+
+            <Route path="trending" element={<Trend />} />
+            <Route path="favorites" element={<Favorites />} />
+            <Route path="user-agreement" element={<UserAgreement />} />
+            <Route path="post/:postId" element={<PostPage />} />
+            <Route path="post/:postId/edit" element={<PostEdit />} />
           </Route>
-          
         </Routes>
       </BrowserRouter>
     </UserProvider>

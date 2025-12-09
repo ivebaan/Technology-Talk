@@ -11,6 +11,7 @@ import axios from "axios";
 import LogoutConfirmation from "../../pages/LogoutConfirmation";
 import ProfileMenu from "./ProfileMenu";
 import { UserContext } from "../../context/UserContext";
+import { getAllCommunities } from "../../api/api";
 
 export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
@@ -23,8 +24,8 @@ export default function Header() {
   const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/communities")
+    axios;
+    getAllCommunities()
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -126,12 +127,12 @@ export default function Header() {
             )}
           </div>
 
-          {/* Notifications */}
+          {/* Notifications
           <Link to="/app/notifications">
             <div className="p-2 rounded-full hover:bg-gray-200 transition-all duration-300 cursor-pointer">
               <BellIcon className="w-7 h-7 text-[#820000]" />
             </div>
-          </Link>
+          </Link> */}
 
           {/* Profile Menu */}
           <div
