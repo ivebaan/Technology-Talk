@@ -1,10 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Postcard from "../components/cards/Postcard";
-import axios from "axios";
 import { FaCheckCircle } from "react-icons/fa";
 import cover from "../assets/images/cover.jpg";
-import { getCommunityByName } from "../api/api";
+import {
+  getCommunityByName,
+  joinCommunity,
+  leaveCommunity,
+  getJoinedCommunities,
+} from "../api/api";
 
 export default function CommunityName() {
   const { communityName } = useParams(); // URL param: /r/something
@@ -13,23 +17,54 @@ export default function CommunityName() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setLoading(true);
+  const userId = 1; // Replace with actual logged-in user ID
 
-    axios
-      getCommunityByName(communityName)
-      .then((res) => {
+  // Fetch community info and check if user has joined
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Get community by name
+        const res = await getCommunityByName(communityName);
         setCommunityData(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
+
+        // Check if user is in joined communities
+        const joinedRes = await getJoinedCommunities(userId);
+        const joinedCommunityIds = joinedRes.data.map(
+          (uc) => uc.community.communityId
+        );
+        setJoined(joinedCommunityIds.includes(res.data.communityId));
+      } catch (err) {
+        console.error(err);
         setCommunityData(null);
+      } finally {
         setLoading(false);
-      });
-  }, [communityName]);
+      }
+    };
+
+    fetchData();
+  }, [communityName, userId]);
+
+  const handleJoinToggle = async () => {
+    if (!communityData) return;
+
+    try {
+      if (joined) {
+        await leaveCommunity(userId, communityData.communityId);
+        setJoined(false);
+      } else {
+        await joinCommunity(userId, communityData.communityId);
+        setJoined(true);
+      }
+    } catch (err) {
+      console.error("Error joining/leaving community:", err);
+    }
+  };
 
   const CircleIcon = ({ bgColor, text }) => (
-    <div className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg`}>
+    <div
+      className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg`}
+    >
       {text}
     </div>
   );
@@ -63,8 +98,10 @@ export default function CommunityName() {
 
           <div className="p-5 flex justify-between items-center">
             <div className="flex items-center gap-4">
-              {/* Replace with backend-provided icon if available */}
-              <CircleIcon bgColor="bg-black" text={communityData.name[0].toUpperCase()} />
+              <CircleIcon
+                bgColor="bg-black"
+                text={communityData.name[0].toUpperCase()}
+              />
 
               <div>
                 <div className="flex items-center">
@@ -91,7 +128,7 @@ export default function CommunityName() {
               </button>
 
               <button
-                onClick={() => setJoined(!joined)}
+                onClick={handleJoinToggle}
                 className={`px-4 py-2 rounded-full border cursor-pointer ${
                   joined
                     ? "bg-gray-200 border-gray-400 text-gray-700"

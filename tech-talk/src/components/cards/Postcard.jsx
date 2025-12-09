@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaThumbsUp,
   FaThumbsDown,
@@ -7,24 +7,38 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import { getCommentsCountForPost } from "../../api/postComments";
 
 function Postcard({
   post,
   handleVote,
   handleThreeDots,
   openDropdown,
-  handleAddToFavorites,
+  handleAddToFavorites = () => {},
   isFavorite,
 }) {
+  const navigate = useNavigate();
+  const [commentCount, setCommentCount] = useState(post.comments || 0);
+
+  useEffect(() => {
+    getCommentsCountForPost(post.id).then(setCommentCount);
+  }, [post.id]);
+
   return (
     <div
-      key={post.id}
-      className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 relative"
+      className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 relative cursor-pointer"
+      onClick={() => navigate(`/app/post/${post.id}`)}
     >
+      {/* Header: Author & Three-dots */}
       <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
         <div className="flex items-center gap-1">
-          <span className="font-semibold text-gray-800">{post.author}</span>
-          {post.verified && (
+          <span className="font-semibold text-gray-800">
+            {post.createdBy?.displayName ||
+              post.createdBy?.username ||
+              "Unknown"}
+          </span>
+          {post.createdBy?.verified && (
             <span className="flex items-center text-green-600 text-xs rounded-full px-2 py-[1px]">
               <FaCheckCircle size={18} className="py-1" />
               Verified
@@ -32,9 +46,13 @@ function Postcard({
           )}
         </div>
 
+        {/* Three-dots dropdown */}
         <div className="relative">
           <button
-            onClick={(e) => handleThreeDots(e, post.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleThreeDots(e, post.id);
+            }}
             className="text-gray-400 hover:text-gray-600"
           >
             <HiDotsHorizontal size={18} />
@@ -52,7 +70,10 @@ function Postcard({
                 Delete
               </button>
               <button
-                onClick={() => handleAddToFavorites(post.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // important!
+                  handleAddToFavorites(post.id);
+                }}
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-1"
               >
                 <FaBookmark className={isFavorite ? "text-yellow-500" : ""} />
@@ -63,17 +84,20 @@ function Postcard({
         </div>
       </div>
 
+      {/* Post Title & Content */}
       <h2 className="text-[17px] font-semibold text-gray-900 mb-1">
         {post.title}
       </h2>
-
       <p className="text-gray-700 text-[15px] mb-3">{post.content}</p>
 
+      {/* Community */}
       <div className="inline-block bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded mb-3">
-        {post.community}
+        {post.community?.name || "Unknown"}
       </div>
 
+      {/* Actions: Votes, Comments, Favorites */}
       <div className="flex items-center gap-3 text-gray-600 text-sm">
+        {/* Votes */}
         <div
           className={`flex items-center px-3 py-1 rounded-full transition-colors duration-200 text-white ${
             post.voteStatus === "up"
@@ -84,7 +108,10 @@ function Postcard({
           }`}
         >
           <button
-            onClick={() => handleVote(post.id, "up")}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleVote(post.id, "up");
+            }}
             className={`transition-colors ${
               post.voteStatus === "up"
                 ? "text-green-400"
@@ -97,7 +124,10 @@ function Postcard({
           <span className="mx-2 font-medium">{post.votes}</span>
 
           <button
-            onClick={() => handleVote(post.id, "down")}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleVote(post.id, "down");
+            }}
             className={`transition-colors ${
               post.voteStatus === "down"
                 ? "text-red-400"
@@ -108,12 +138,23 @@ function Postcard({
           </button>
         </div>
 
-        <button className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
-          <FaCommentAlt /> <span>{post.comments}</span>
+        {/* Comments */}
+        <button
+          className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/app/post/${post.id}`);
+          }}
+        >
+          <FaCommentAlt /> <span>{commentCount}</span>
         </button>
 
+        {/* Favorite */}
         <button
-          onClick={() => handleAddToFavorites(post.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // prevents navigation
+            handleAddToFavorites(post.id);
+          }}
           className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
         >
           <FaBookmark className={isFavorite ? "text-yellow-500" : ""} />

@@ -1,8 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { User, HelpCircle, BookOpen, LogOut } from "lucide-react";
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 
 function ProfileMenu({ open, setOpen, profileRef, user, onSignOut }) {
+  const { currentUser } = useContext(UserContext);
+
   if (!open) return null;
 
   const name = (user && user.name) || "Michael Cambal";
@@ -16,8 +20,10 @@ function ProfileMenu({ open, setOpen, profileRef, user, onSignOut }) {
       aria-label="Profile menu"
     >
       <div className="px-4 py-3">
-        <div className="text-sm font-semibold text-gray-900">{name}</div>
-        <div className="text-xs text-gray-500 mt-1">{email}</div>
+        <div className="text-sm font-semibold text-gray-900">
+          {currentUser?.displayName}
+        </div>
+        <div className="text-xs text-gray-500 mt-1">{currentUser?.email}</div>
       </div>
 
       <div className="border-t" />

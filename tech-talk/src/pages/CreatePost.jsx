@@ -75,12 +75,13 @@ export default function CreatePost() {
     setErrors(newErrors);
     if (!valid) return;
 
-    axios;
     createPost({
       title: title,
       content: content,
       userId: currentUser.id,
       communityId: selectedCommunityId,
+      votes: 0,
+      isFavorites: false,
     })
       .then(() => {
         setTitle("");
@@ -90,7 +91,7 @@ export default function CreatePost() {
         if (editorRef.current) editorRef.current.innerHTML = "";
         alert("Successfully Posted!");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error creating post:", err));
   };
 
   return (

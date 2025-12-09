@@ -1,39 +1,37 @@
-import React, { useState, useContext } from "react";
-import API from "../api/api";
+import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
+import { createCommunity, getAllCategories, joinCommunity } from "../api/api";
 
 export default function CreateCommunities() {
   const { currentUser } = useContext(UserContext);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [categoryInput, setCategoryInput] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [errors, setErrors] = useState({ name: "", description: "" });
-  const suggestedCategories = [
-    "Coding",
-    "Cooking",
-    "Studying",
-    "Gaming",
-    "Music",
-    "Art",
-  ];
+  const [category, setCategory] = useState(null);
+  const [errors, setErrors] = useState({
+    name: "",
+    description: "",
+    category: "",
+  });
+  const [suggestedCategories, setSuggestedCategories] = useState([]);
 
-  const addCategory = (g) => {
-    if (!g) return;
-    const category = g.trim();
-    if (!category) return;
-    if (!categories.includes(category)) setCategories((s) => [...s, category]);
-    setCategoryInput("");
+  useEffect(() => {
+    getAllCategories()
+      .then((res) => setSuggestedCategories(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const addCategory = (catObj) => {
+    if (!catObj) return;
+    setCategory(catObj);
   };
 
-  const removeCategory = (g) => {
-    setCategories((s) => s.filter((x) => x !== g));
-  };
+  const removeCategory = () => setCategory(null);
 
   const handleCreate = async () => {
-    const newErrors = { name: "", description: "" };
+    const newErrors = { name: "", description: "", category: "" };
     let valid = true;
+
     if (!name.trim()) {
       newErrors.name = "Community name is required";
       valid = false;
@@ -42,28 +40,44 @@ export default function CreateCommunities() {
       newErrors.description = "Description is required";
       valid = false;
     }
+    if (!category) {
+      newErrors.category = "Please select a category";
+      valid = false;
+    }
     if (!currentUser) {
       alert("You must be logged in to create a community.");
       valid = false;
     }
+
     setErrors(newErrors);
     if (!valid) return;
 
     try {
-      const payload = {
+      const communityData = {
         name: name.trim(),
         description: description.trim(),
-        categories,
-        ownerId: currentUser?.id || null,
+        createdBy: { userId: currentUser.userId }, // Backend expects UserEntity
+        category: { categoryId: category.categoryId }, // Backend expects CategoryEntity
       };
-      await API.post("/community", payload);
+
+      // 1️⃣ Create the community
+      const res = await createCommunity(communityData);
+      const newCommunityId = res.data.communityId;
+
+      // 2️⃣ Add the current user to the community
+      await joinCommunity(currentUser.userId, newCommunityId);
+
       alert("Community created successfully");
+
+      // Reset form
       setName("");
       setDescription("");
-      setGenres([]);
+      setCategory(null);
     } catch (err) {
       console.error(err);
-      alert("Failed to create community");
+      alert(
+        "Failed to create community. Make sure the backend is running and JSON is valid."
+      );
     }
   };
 
@@ -71,6 +85,7 @@ export default function CreateCommunities() {
     <div className="w-full flex flex-col max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Create Community</h1>
 
+      {/* Name */}
       <div className="mb-4">
         <label className="text-sm font-medium">Community Name</label>
         <input
@@ -84,6 +99,7 @@ export default function CreateCommunities() {
         )}
       </div>
 
+      {/* Description */}
       <div className="mb-4">
         <label className="text-sm font-medium">Description</label>
         <textarea
@@ -97,70 +113,53 @@ export default function CreateCommunities() {
         )}
       </div>
 
+      {/* Category */}
       <div className="mb-4">
-        <label className="text-sm font-medium">Category (tags)</label>
-        <div className="flex gap-2 mt-2">
-          <input
-            value={categoryInput}
-            onChange={(e) => setCategoryInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addCategory(categoryInput);
-              }
-            }}
-            className="flex-1 p-2 border rounded-full outline-none"
-            placeholder="Add a category and press Enter (e.g. Coding)"
-          />
-          <button
-            className="px-4 py-2 bg-gray-200 rounded-full"
-            onClick={() => addCategory(categoryInput)}
-          >
-            Add
-          </button>
-        </div>
+        <label className="text-sm font-medium">Category</label>
 
-        <div className="flex flex-wrap gap-2 mt-3">
-          {categories.map((g) => (
-            <div
-              key={g}
-              className="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-2"
-            >
-              <span className="text-sm">{g}</span>
+        {category && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            <div className="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-2">
+              <span className="text-sm">{category.name}</span>
               <button
                 className="text-xs text-gray-600"
-                onClick={() => removeCategory(g)}
+                onClick={removeCategory}
               >
                 ✕
               </button>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <div className="mt-3 text-sm text-gray-600">
-          Suggested: {suggestedCategories.map((s) => (
+          Suggested:{" "}
+          {suggestedCategories.map((s) => (
             <button
-              key={s}
+              key={s.categoryId}
               className="mr-2 mb-2 px-2 py-1 bg-white border rounded-full text-xs"
               onClick={() => addCategory(s)}
             >
-              {s}
+              {s.name}
             </button>
           ))}
         </div>
+        {errors.category && (
+          <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+        )}
       </div>
 
+      {/* Buttons */}
       <div className="flex justify-end gap-3 mt-4">
-            <button
-              className="px-5 py-2 rounded-full bg-gray-300 text-sm hover:bg-gray-400"
-              onClick={() => {
-                setName("");
-                setDescription("");
-                setCategories([]);
-              }}
-            >
-              Reset
-            </button>
+        <button
+          className="px-5 py-2 rounded-full bg-gray-300 text-sm hover:bg-gray-400"
+          onClick={() => {
+            setName("");
+            setDescription("");
+            setCategory(null);
+          }}
+        >
+          Reset
+        </button>
         <button
           className="px-5 py-2 rounded-full bg-[#820000] text-white font-bold text-sm hover:bg-[#a00000]"
           onClick={handleCreate}
