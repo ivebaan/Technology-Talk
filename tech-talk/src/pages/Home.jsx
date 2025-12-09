@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   getAllCommunities,
   getAllPosts,
@@ -7,6 +7,8 @@ import {
   deleteFavoriteById,
   votePost,
 } from "../api/api";
+import { UserContext } from "../context/UserContext";
+
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
 
@@ -16,147 +18,199 @@ function Home() {
   const [communities, setCommunities] = useState([]);
   const [favorites, setFavorites] = useState([]);
 
-  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  // Get logged-in user from context
+  const { currentUser } = useContext(UserContext);
+  const userId = currentUser?.id || currentUser?.userId;
 
-  // --- Fetch data on mount ---
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [communityRes, postsRes, favRes] = await Promise.all([
-          getAllCommunities(),
-          getAllPosts(),
-          getAllFavorites(),
-        ]);
+  // --------------------------------------------------
+  // FETCH DATA
+  // --------------------------------------------------
+  const fetchAllData = async () => {
+    try {
+      const [communityRes, postsRes, favRes] = await Promise.all([
+        getAllCommunities(),
+        getAllPosts(),
+        getAllFavorites(),
+      ]);
 
-        setCommunities(communityRes.data);
+      setCommunities(communityRes.data);
 
-        setPosts(
-          postsRes.data
-            .map((post) => ({
-              ...post,
-              voteStatus: post.voteStatus || null,
-            }))
-            .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated))
+      // ✅ Posts from Spring Boot backend
+      const normalizedPosts = postsRes.data
+        .map((post) => ({
+          ...post,
+          voteStatus: null,  // Voting UI will show user's votes after they vote
+        }))
+        .sort(
+          (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
         );
 
-        const userFavs = favRes.data
-          .filter((f) => f.post && f.user?.id === userId)
-          .map((f) => f.post.id);
+      console.log("📝 Posts loaded:", normalizedPosts);
+      setPosts(normalizedPosts);
 
-        setFavorites(userFavs);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
+      // ✅ Normalize favorites
+      const userFavorites = favRes.data
+        .filter((fav) => fav.post && fav.user?.id === userId)
+        .map((fav) => fav.post.id);
 
-    fetchData();
+      console.log("❤️ Favorites:", userFavorites);
+      setFavorites(userFavorites);
+    } catch (err) {
+      console.error("❌ Failed to fetch data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllData();
   }, [userId]);
 
-  // --- Handle voting ---
   const handleVote = async (postId, type) => {
-    if (!userId) return;
+    if (!userId) {
+      console.warn("⚠️ No userId found");
+      return;
+    }
 
+    console.log(`🔵 Voting - postId: ${postId}, type: ${type}, userId: ${userId}`);
+
+    // Store the old state in case we need to revert
+    const oldPosts = posts;
+
+    // ✅ Instant UI update
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === postId) {
-          let newVotes = post.votes;
-          let newStatus = post.voteStatus;
-
+          let newVotes = post.votes || 0;
           if (type === "up") {
             if (post.voteStatus === "up") {
               newVotes -= 1;
-              newStatus = null;
-            } else {
-              newVotes += post.voteStatus === "down" ? 2 : 1;
-              newStatus = "up";
+              console.log("↩️ Removing upvote");
+              return { ...post, votes: newVotes, voteStatus: null };
             }
+            newVotes += post.voteStatus === "down" ? 2 : 1;
+            console.log("👍 Adding upvote, new votes:", newVotes);
+            return { ...post, votes: newVotes, voteStatus: "up" };
           } else if (type === "down") {
             if (post.voteStatus === "down") {
               newVotes += 1;
-              newStatus = null;
-            } else {
-              newVotes -= post.voteStatus === "up" ? 2 : 1;
-              newStatus = "down";
+              console.log("↩️ Removing downvote");
+              return { ...post, votes: newVotes, voteStatus: null };
             }
+            newVotes -= post.voteStatus === "up" ? 2 : 1;
+            console.log("👎 Adding downvote, new votes:", newVotes);
+            return { ...post, votes: newVotes, voteStatus: "down" };
           }
-
-          return { ...post, votes: newVotes, voteStatus: newStatus };
         }
         return post;
       })
     );
 
+    // ✅ Sync with backend
     try {
-      const res = await votePost(postId, type, userId);
+      console.log(`📤 Sending vote to backend: PATCH /posts/${postId}/vote?userId=${userId}&type=${type}`);
+      const response = await votePost(postId, type, userId);
+      console.log("✅ Vote response:", response.data);
+      
+      // Update the specific post with the backend response (which includes updated votes count)
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === postId
-            ? { ...post, votes: res.data.votes, voteStatus: type }
-            : post
+          post.id === postId ? { ...post, votes: response.data.votes } : post
         )
       );
     } catch (err) {
-      console.error("Error saving vote:", err);
+      console.error("❌ Vote sync failed:", err);
+      console.error("Error status:", err.response?.status);
+      console.error("Error data:", err.response?.data);
+      console.error("Error message:", err.message);
+      
+      // Revert UI on error
+      setPosts(oldPosts);
     }
   };
 
-  // --- Handle three-dots menu ---
+  // --------------------------------------------------
+  // THREE DOTS DROPDOWN CONTROL
+  // --------------------------------------------------
   const handleThreeDots = (e, id) => {
     e.stopPropagation();
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
-  // --- Handle add/remove favorites ---
+  // --------------------------------------------------
+  // FAVORITES TOGGLE
+  // --------------------------------------------------
   const handleAddToFavorites = async (postId) => {
     try {
-      const userObj = localStorage.getItem("user");
-      if (!userObj) return;
-      const userId = JSON.parse(userObj).id;
+      if (!userId) return;
 
-      const isAlreadyFavorite = favorites.includes(postId);
+      const isFavorite = favorites.includes(postId);
 
-      if (isAlreadyFavorite) {
+      if (isFavorite) {
+        // --- Remove favorite ---
         const favRes = await getAllFavorites();
+
         const favItem = favRes.data.find(
-          (f) => f.post && f.post.id === postId && f.user?.id === userId
+          (f) =>
+            f.post?.postId === postId &&
+            f.user?.id === userId
         );
-        if (favItem) await deleteFavoriteById(favItem.favoriteId);
+
+        if (favItem) {
+          await deleteFavoriteById(favItem.favoriteId);
+        }
       } else {
+        // --- Add favorite ---
         await addToFavorites(postId, userId);
       }
 
-      // Refresh favorites
-      const updatedFavRes = await getAllFavorites();
-      const updatedUserFavs = updatedFavRes.data
-        .filter((f) => f.post && f.user?.id === userId)
-        .map((f) => f.post.id);
+      // ✅ Refresh favorite list
+      const updatedFavs = await getAllFavorites();
 
-      setFavorites(updatedUserFavs);
+      const updatedUserFavorites = updatedFavs.data
+        .filter((fav) => fav.post && fav.user?.id === userId)
+        .map((fav) => fav.post.postId);
+
+      setFavorites(updatedUserFavorites);
     } catch (err) {
-      console.error("Error updating favorites:", err);
+      console.error("❌ Favorite update failed:", err);
     }
   };
 
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
   return (
-    <div className="bg-[#f6f7f8] min-h-screen flex justify-center">
-      <div className="w-full max-w-6xl mt-6 flex gap-6">
-        <main className="flex-1 space-y-4">
-          {posts.map((post) => (
-            <Postcard
-              key={post.id}
-              post={post}
-              handleVote={handleVote}
-              handleThreeDots={handleThreeDots}
-              handleAddToFavorites={handleAddToFavorites}
-              isFavorite={favorites.includes(post.id)}
-              openDropdown={openDropdown}
-            />
-          ))}
+    <div className="bg-gray-50 min-h-screen py-4">
+      <div className="max-w-5xl mx-auto px-4 flex gap-6">
+
+        {/* POSTS - Main Feed */}
+        <main className="flex-1 space-y-3">
+          {/* Posts Grid */}
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <Postcard
+                key={post.id}
+                post={post}
+                handleVote={handleVote}
+                handleThreeDots={handleThreeDots}
+                handleAddToFavorites={handleAddToFavorites}
+                isFavorite={favorites.includes(post.id)}
+                openDropdown={openDropdown}
+              />
+            ))
+          ) : (
+            <div className="bg-white rounded-lg p-8 text-center border border-gray-200">
+              <p className="text-gray-500 font-medium">No posts yet</p>
+            </div>
+          )}
         </main>
 
-        <aside className="w-80">
-          <PopularCommunitiesCard communities={communities} />
+        {/* SIDEBAR - Communities */}
+        <aside className="w-80 flex-shrink-0">
+          <div className="sticky top-4">
+            <PopularCommunitiesCard communities={communities} />
+          </div>
         </aside>
+
       </div>
     </div>
   );

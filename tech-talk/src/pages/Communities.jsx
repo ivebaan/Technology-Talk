@@ -56,56 +56,56 @@ const Communities = () => {
   const allCategories = [{ name: "All" }, ...categories];
 
   return (
-    <div className="bg-white min-h-screen text-maroon-900 p-8 mx-auto">
-      <h1 className="text-4xl font-bold mb-6 text-maroon-800">
-        Explore Communities
-      </h1>
+    <div className="bg-gray-50 min-h-screen text-gray-900 py-4 px-4">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-lg font-bold mb-3">Communities</h1>
 
-      {/* Category buttons */}
-      <div className="flex flex-wrap gap-3 mb-8">
-        {allCategories.map((category, index) => (
-          <button
-            key={index}
-            onClick={() => setActiveCategory(category.name)}
-            className={`cursor-pointer px-4 py-2 rounded-lg transition text-sm ${
-              activeCategory === category.name
-                ? "bg-[#820000] text-white"
-                : "text-[#820000] hover:bg-[#820000] hover:text-white"
-            }`}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
-
-      <h2 className="text-2xl font-semibold mb-4">
-        {activeCategory} Communities
-      </h2>
-
-      {/* Communities grid */}
-      {filtered.length > 0 ? (
-        <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-          {filtered.map((item) => (
-            <CommunityCard
-              key={item.communityId}
-              {...item}
-              isJoined={joined.includes(item.communityId)}
-              onJoin={async (communityId) => {
-                if (!currentUser?.id) return;
-                if (joined.includes(communityId)) {
-                  await leaveCommunity(currentUser.id, communityId);
-                  setJoined((prev) => prev.filter((id) => id !== communityId));
-                } else {
-                  await joinCommunity(currentUser.id, communityId);
-                  setJoined((prev) => [...prev, communityId]);
-                }
-              }}
-            />
+        {/* Category buttons */}
+        <div className="flex flex-wrap gap-2 mb-4 bg-white rounded-lg p-3 border border-gray-200">
+          {allCategories.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveCategory(category.name)}
+              className={`cursor-pointer px-3 py-1 rounded text-xs font-semibold transition-all ${
+                activeCategory === category.name
+                  ? "bg-[#820000] text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-[#820000] hover:text-white"
+              }`}
+            >
+              {category.name}
+            </button>
           ))}
         </div>
-      ) : (
-        <p className="text-gray-500">No communities found in this category.</p>
-      )}
+
+        <h2 className="text-sm font-semibold text-gray-600 mb-3">
+          {activeCategory} Communities
+        </h2>
+
+        {/* Communities grid */}
+        {filtered.length > 0 ? (
+          <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3">
+            {filtered.map((item) => (
+              <CommunityCard
+                key={item.communityId}
+                {...item}
+                isJoined={joined.includes(item.communityId)}
+                onJoin={async (communityId) => {
+                  if (!currentUser?.id) return;
+                  if (joined.includes(communityId)) {
+                    await leaveCommunity(currentUser.id, communityId);
+                    setJoined((prev) => prev.filter((id) => id !== communityId));
+                  } else {
+                    await joinCommunity(currentUser.id, communityId);
+                    setJoined((prev) => [...prev, communityId]);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-xs">No communities found.</p>
+        )}
+      </div>
     </div>
   );
 };

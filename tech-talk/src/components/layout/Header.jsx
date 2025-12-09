@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/nice.png";
 import {
   MagnifyingGlassIcon,
@@ -22,6 +22,7 @@ export default function Header() {
   const [data, setData] = useState([]);
   const [showLogout, setShowLogout] = useState(false);
   const { currentUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios;
@@ -53,41 +54,44 @@ export default function Header() {
 
   return (
     <>
-      <header className="h-20 flex shadow-sm justify-between bg-white px-4 flex-shrink-0">
+      <header className="h-16 flex shadow-sm justify-between bg-white px-4 flex-shrink-0 border-b border-gray-200">
         {/* Logo */}
-        <div className="flex items-center p-1">
+        <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate("/app/home")}>
           <img
             src={logo}
-            className="object-fill cursor-pointer h-16"
+            className="object-fill h-14 hover:scale-105 transition-transform"
             alt="TechTalk Logo"
           />
-          <h1 className="font-bold text-xl text-[#820000] ml-2">TechTalk</h1>
+          <h1 className="font-bold text-xl text-[#820000]">TechTalk</h1>
         </div>
 
         {/* Search */}
         <div className="flex items-center relative w-1/3">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#820000]" />
           <input
             type="text"
-            placeholder="Search categories..."
+            placeholder="Search communities..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 p-2 bg-gray-200 rounded-full focus:outline-[#820000]"
+            className="w-full pl-9 pr-3 py-1.5 text-sm bg-gray-100 rounded-full focus:outline-none focus:ring-1 focus:ring-[#820000] focus:bg-white transition-all"
           />
           {searchQuery && (
-            <ul className="absolute top-12 left-0 w-full bg-white border rounded-md shadow-lg max-h-48 overflow-auto z-20">
+            <ul className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-lg shadow-md max-h-40 overflow-auto z-20">
               {filteredCategories.length > 0 ? (
                 filteredCategories.map((c, index) => (
                   <li
                     key={index}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => setSearchQuery(c)}
+                    className="px-3 py-1.5 text-xs cursor-pointer hover:bg-gray-100 hover:text-[#820000] transition border-b border-gray-100 last:border-0"
+                    onClick={() => {
+                      navigate(`/app/community/${c}`);
+                      setSearchQuery("");
+                    }}
                   >
-                    {c}
+                    r/{c}
                   </li>
                 ))
               ) : (
-                <li className="p-2 text-gray-500">No categories found</li>
+                <li className="px-3 py-1.5 text-xs text-gray-500 text-center">No results</li>
               )}
             </ul>
           )}
@@ -99,28 +103,28 @@ export default function Header() {
           <div ref={createRef} className="relative">
             <button
               onClick={() => setCreateOpen((s) => !s)}
-              className="text-md cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-all duration-300 font-semibold text-[#820000] flex items-center gap-2"
+              className="text-sm cursor-pointer hover:bg-gray-100 px-3 py-1.5 rounded transition font-semibold text-[#820000] flex items-center gap-1"
             >
-              <SquarePlusIcon className="h-4 w-4 text-[#820000]" />
+              <SquarePlusIcon className="h-4 w-4" />
               Create
             </button>
 
             {createOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-40">
+              <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-md z-40">
                 <Link to="/app/create-post">
                   <div
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm transition border-b border-gray-100"
                     onClick={() => setCreateOpen(false)}
                   >
-                    Create Post
+                    ✍️ Post
                   </div>
                 </Link>
                 <Link to="/app/create-community">
                   <div
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm transition"
                     onClick={() => setCreateOpen(false)}
                   >
-                    Create Community
+                    🏘️ Community
                   </div>
                 </Link>
               </div>
@@ -137,10 +141,10 @@ export default function Header() {
           {/* Profile Menu */}
           <div
             ref={profileRef}
-            className="relative p-2 rounded-full hover:bg-gray-200 transition-all duration-300 cursor-pointer"
+            className="relative p-2 rounded-full hover:bg-red-100 transition-all duration-300 cursor-pointer"
             onClick={() => setProfileOpen(!profileOpen)}
           >
-            <UserCircleIcon className="w-10 h-10 text-[#820000]" />
+            <UserCircleIcon className="w-10 h-10 text-[#820000] hover:scale-110 transition-transform" />
 
             {profileOpen && (
               <ProfileMenu

@@ -1,4 +1,5 @@
 import React from "react";
+import PolicyPage from "../components/PolicyPage";
 
 const PrivacyPolicy = () => {
   const sidebarItems = [
@@ -155,49 +156,12 @@ const PrivacyPolicy = () => {
       .toLowerCase();
 
   return (
-    <div className="bg-white min-h-screen text-maroon-900 p-8 mx-auto">
-      <h1 className="text-4xl font-bold mb-6 text-maroon-800">
-        Privacy & Policy
-      </h1>
-
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-1/4 mr-8">
-          <nav>
-            <h3 className="font-semibold mb-2">Jump to</h3>
-            <ul>
-              {sidebarItems.map((item) => (
-                <li key={item} className="mb-1">
-                  <a href={`#${generateId(item)}`} className="hover:underline">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <h4 className="mt-6 font-semibold">Revisions</h4>
-          <ul>
-            <li>May 29, 2025</li>
-          </ul>
-        </aside>
-
-        {/* Main Content */}
-        <main className="w-3/4">
-          <p className="mb-6">
-            <strong>Effective:</strong> June 28, 2025.{" "}
-            <strong>Last Revised:</strong> May 29, 2025.
-          </p>
-
-          {sidebarItems.map((title) => (
-            <section key={title} id={generateId(title)} className="mb-8">
-              <h2 className="text-2xl font-semibold mb-2">{title}</h2>
-              <p>{sectionsContent[title]}</p>
-            </section>
-          ))}
-        </main>
-      </div>
-    </div>
+    <PolicyPage
+      title="Privacy & Policy"
+      sections={sectionsContent}
+      sidebarItems={sidebarItems}
+      lastRevised="May 29, 2025"
+    />
   );
 };
 
