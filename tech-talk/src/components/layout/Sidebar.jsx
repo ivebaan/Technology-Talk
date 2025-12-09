@@ -30,9 +30,9 @@ export default function Sidebar() {
   }, [currentUser]);
 
   return (
-    <aside className="w-60 bg-white p-4 shadow-md overflow-y-auto">
+    <aside className="w-56 bg-white p-3 border-r border-gray-200 overflow-y-auto">
       {/* Main navigation links */}
-      <ul className="space-y-1 w-full">
+      <ul className="space-y-0.5 w-full">
         <NavLinkItem
           to="/app/home"
           icon={<HomeIcon className="h-4 w-4" />}
@@ -41,7 +41,7 @@ export default function Sidebar() {
         <NavLinkItem
           to="/app/communities"
           icon={<CursorArrowRippleIcon className="h-4 w-4" />}
-          label="Explore Communities"
+          label="Explore"
         />
         <NavLinkItem
           to="/app/trending"
@@ -51,13 +51,13 @@ export default function Sidebar() {
         <NavLinkItem
           to="/app/favorites"
           icon={<BookmarkIcon className="h-4 w-4" />}
-          label="Favorites"
+          label="Saved"
         />
       </ul>
 
-      <hr className="border-t border-gray-300 w-full my-4" />
-      <h2 className="text-gray-400 font-medium">JOINED COMMUNITIES</h2>
-      <ul className="space-y-1 w-full mt-4">
+      <hr className="border-t border-gray-200 w-full my-3" />
+      <h2 className="text-gray-500 font-semibold text-xs px-3 py-1">COMMUNITIES</h2>
+      <ul className="space-y-0.5 w-full mt-2">
         {joinedCommunities.length > 0 ? (
           joinedCommunities.map((uc) => (
             <NavLinkItem
@@ -69,19 +69,19 @@ export default function Sidebar() {
                   text={uc.community.name[0].toUpperCase()}
                 />
               }
-              label={`t/${uc.community.name}`}
+              label={`r/${uc.community.name}`}
             />
           ))
         ) : (
-          <li className="text-gray-500 px-3 py-2 text-sm">
+          <li className="text-gray-500 px-3 py-2 text-xs">
             No joined communities
           </li>
         )}
       </ul>
 
-      <hr className="border-t border-gray-300 w-full my-4" />
+      <hr className="border-t border-gray-200 w-full my-3" />
       {/* Footer / Policy links */}
-      <ul className="space-y-1 w-full">
+      <ul className="space-y-0.5 w-full">
         <NavLinkItem
           to="/app/user-agreement"
           icon={<NewspaperIcon className="h-4 w-4" />}
@@ -90,7 +90,7 @@ export default function Sidebar() {
         <NavLinkItem
           to="/app/privacy-policy"
           icon={<ShieldCheckIcon className="h-4 w-4" />}
-          label="Privacy & Policy"
+          label="Privacy"
         />
         <NavLinkItem
           to="/app/settings"

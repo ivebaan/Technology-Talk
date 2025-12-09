@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Postcard from "../components/cards/Postcard";
 import { FaCheckCircle } from "react-icons/fa";
 import cover from "../assets/images/cover.jpg";
@@ -8,16 +8,27 @@ import {
   joinCommunity,
   leaveCommunity,
   getJoinedCommunities,
+  getAllFavorites,
+  addToFavorites,
+  deleteFavoriteById,
+  votePost,
+  getAllPosts,
 } from "../api/api";
+import { UserContext } from "../context/UserContext";
 
 export default function CommunityName() {
-  const { communityName } = useParams(); // URL param: /r/something
+  const { communityName } = useParams();
   const [communityData, setCommunityData] = useState(null);
+  const [communityPosts, setCommunityPosts] = useState([]);
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const navigate = useNavigate();
 
-  const userId = 1; // Replace with actual logged-in user ID
+  // Get logged-in user from context
+  const { currentUser } = useContext(UserContext);
+  const userId = currentUser?.id || currentUser?.userId;
 
   // Fetch community info and check if user has joined
   useEffect(() => {
@@ -25,17 +36,35 @@ export default function CommunityName() {
       setLoading(true);
       try {
         // Get community by name
-        const res = await getCommunityByName(communityName);
-        setCommunityData(res.data);
+        const communityRes = await getCommunityByName(communityName);
+        const community = communityRes.data;
+        setCommunityData(community);
+
+        // Fetch all posts and filter by community ID
+        const postsRes = await getAllPosts();
+        const filteredPosts = postsRes.data.filter(
+          (post) => post.community?.id === community.communityId
+        );
+        setCommunityPosts(filteredPosts);
+        console.log(`📝 Posts for community ${communityName}:`, filteredPosts);
 
         // Check if user is in joined communities
-        const joinedRes = await getJoinedCommunities(userId);
-        const joinedCommunityIds = joinedRes.data.map(
-          (uc) => uc.community.communityId
-        );
-        setJoined(joinedCommunityIds.includes(res.data.communityId));
+        if (userId) {
+          const joinedRes = await getJoinedCommunities(userId);
+          const joinedCommunityIds = joinedRes.data.map(
+            (uc) => uc.community.communityId
+          );
+          setJoined(joinedCommunityIds.includes(community.communityId));
+
+          // Fetch user's favorites
+          const favRes = await getAllFavorites();
+          const userFavs = favRes.data
+            .filter((f) => f.post && f.user?.id === userId)
+            .map((f) => f.post.id);
+          setFavoriteIds(userFavs);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching community data:", err);
         setCommunityData(null);
       } finally {
         setLoading(false);
@@ -46,7 +75,7 @@ export default function CommunityName() {
   }, [communityName, userId]);
 
   const handleJoinToggle = async () => {
-    if (!communityData) return;
+    if (!communityData || !userId) return;
 
     try {
       if (joined) {
@@ -58,6 +87,78 @@ export default function CommunityName() {
       }
     } catch (err) {
       console.error("Error joining/leaving community:", err);
+    }
+  };
+
+  const handleThreeDots = (e, id) => {
+    e.stopPropagation();
+    setOpenDropdown((prev) => (prev === id ? null : id));
+  };
+
+  const handleAddToFavorites = async (postId) => {
+    if (!userId) return;
+
+    try {
+      const isFav = favoriteIds.includes(postId);
+      if (isFav) {
+        const favRes = await getAllFavorites();
+        const favItem = favRes.data.find(
+          (f) => f.post?.id === postId && f.user?.id === userId
+        );
+        if (favItem) {
+          await deleteFavoriteById(favItem.favoriteId);
+          setFavoriteIds((prev) => prev.filter((id) => id !== postId));
+        }
+      } else {
+        await addToFavorites(postId, userId);
+        setFavoriteIds((prev) => [...prev, postId]);
+      }
+    } catch (err) {
+      console.error("Error updating favorites:", err);
+    }
+  };
+
+  const handleVote = async (postId, type) => {
+    if (!userId) {
+      console.warn("⚠️ No userId found");
+      return;
+    }
+
+    // Instant UI update
+    setCommunityPosts((prev) => {
+      return prev.map((post) => {
+        if (post.id === postId) {
+          let newVotes = post.votes || 0;
+          if (type === "up") {
+            if (post.voteStatus === "up") {
+              newVotes -= 1;
+              return { ...post, votes: newVotes, voteStatus: null };
+            }
+            newVotes += post.voteStatus === "down" ? 2 : 1;
+            return { ...post, votes: newVotes, voteStatus: "up" };
+          } else if (type === "down") {
+            if (post.voteStatus === "down") {
+              newVotes += 1;
+              return { ...post, votes: newVotes, voteStatus: null };
+            }
+            newVotes -= post.voteStatus === "up" ? 2 : 1;
+            return { ...post, votes: newVotes, voteStatus: "down" };
+          }
+        }
+        return post;
+      });
+    });
+
+    // Sync with backend
+    try {
+      const response = await votePost(postId, type, userId);
+      setCommunityPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId ? { ...post, votes: response.data.votes } : post
+        )
+      );
+    } catch (err) {
+      console.error("❌ Vote sync failed:", err);
     }
   };
 
@@ -96,44 +197,46 @@ export default function CommunityName() {
             style={{ backgroundImage: `url(${cover})` }}
           ></div>
 
-          <div className="p-5 flex justify-between items-center">
-            <div className="flex items-center gap-4">
+          <div className="p-4 flex justify-between items-center">
+            <div className="flex items-center gap-3">
               <CircleIcon
-                bgColor="bg-black"
+                bgColor="bg-[#820000]"
                 text={communityData.name[0].toUpperCase()}
               />
 
               <div>
                 <div className="flex items-center">
-                  <h1 className="text-2xl font-semibold text-gray-900">
+                  <h1 className="text-lg font-bold text-gray-900">
                     r/{communityData.name}
                   </h1>
-                  <span className="flex items-center text-green-600 text-xs px-2 mt-1">
-                    <FaCheckCircle size={14} />
-                  </span>
+                  {communityData.verified && (
+                    <span className="text-green-600 text-xs ml-2">
+                      <FaCheckCircle size={12} />
+                    </span>
+                  )}
                 </div>
 
-                <p className="text-gray-700 text-sm mt-1">
+                <p className="text-gray-600 text-xs mt-1 line-clamp-1">
                   {communityData.description}
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => navigate("/app/create-post")}
-                className="bg-[#820000] text-white px-4 py-2 rounded-full hover:bg-[#a30000] cursor-pointer"
+                className="bg-[#820000] text-white px-3 py-1.5 rounded text-xs font-semibold hover:shadow-md cursor-pointer"
               >
-                Create Post
+                Post
               </button>
 
               <button
                 onClick={handleJoinToggle}
-                className={`px-4 py-2 rounded-full border cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold transition-all ${
                   joined
-                    ? "bg-gray-200 border-gray-400 text-gray-700"
-                    : "bg-[#820000] text-white border-[#820000]"
-                } hover:opacity-90`}
+                    ? "bg-gray-200 text-gray-700"
+                    : "bg-[#820000] text-white"
+                } `}
               >
                 {joined ? "Joined" : "Join"}
               </button>
@@ -142,13 +245,21 @@ export default function CommunityName() {
         </div>
 
         {/* Community Posts */}
-        <div className="space-y-4">
-          {communityData.posts && communityData.posts.length > 0 ? (
-            communityData.posts.map((post) => (
-              <Postcard key={post.id} post={post} />
+        <div className="space-y-3">
+          {communityPosts && communityPosts.length > 0 ? (
+            communityPosts.map((post) => (
+              <Postcard
+                key={post.id}
+                post={post}
+                handleVote={handleVote}
+                handleThreeDots={handleThreeDots}
+                handleAddToFavorites={handleAddToFavorites}
+                isFavorite={favoriteIds.includes(post.id)}
+                openDropdown={openDropdown}
+              />
             ))
           ) : (
-            <p className="text-gray-500 text-sm">No posts yet.</p>
+            <p className="bg-white rounded-lg p-8 text-center text-gray-500 text-sm border border-gray-200">No posts yet.</p>
           )}
         </div>
       </div>

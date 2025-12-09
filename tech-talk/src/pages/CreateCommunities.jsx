@@ -82,90 +82,96 @@ export default function CreateCommunities() {
   };
 
   return (
-    <div className="w-full flex flex-col max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Create Community</h1>
+    <div className="bg-gray-50 min-h-screen py-4 px-4">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-lg font-bold text-gray-900 mb-4">Create Community</h1>
 
-      {/* Name */}
-      <div className="mb-4">
-        <label className="text-sm font-medium">Community Name</label>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full mt-2 p-3 border rounded-lg outline-none"
-          placeholder="e.g. r/learnprogramming"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-        )}
-      </div>
-
-      {/* Description */}
-      <div className="mb-4">
-        <label className="text-sm font-medium">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full mt-2 p-3 border rounded-lg min-h-[140px] outline-none"
-          placeholder="Describe what this community is about"
-        />
-        {errors.description && (
-          <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-        )}
-      </div>
-
-      {/* Category */}
-      <div className="mb-4">
-        <label className="text-sm font-medium">Category</label>
-
-        {category && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            <div className="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-2">
-              <span className="text-sm">{category.name}</span>
-              <button
-                className="text-xs text-gray-600"
-                onClick={removeCategory}
-              >
-                ✕
-              </button>
-            </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+          {/* Name */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700">Community Name</label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#820000]"
+              placeholder="e.g. r/learnprogramming"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
-        )}
 
-        <div className="mt-3 text-sm text-gray-600">
-          Suggested:{" "}
-          {suggestedCategories.map((s) => (
+          {/* Description */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 rounded-lg min-h-[80px] resize-none focus:outline-none focus:ring-1 focus:ring-[#820000]"
+              placeholder="Describe what this community is about"
+            />
+            {errors.description && (
+              <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+            )}
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700">Category</label>
+
+            {category && (
+              <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                <div className="px-2 py-1 bg-gray-100 rounded text-xs font-semibold text-gray-700 flex items-center gap-1">
+                  <span>{category.name}</span>
+                  <button
+                    className="text-gray-500 hover:text-gray-700"
+                    onClick={removeCategory}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-2 text-xs text-gray-600">
+              <div className="font-semibold mb-1">Suggested:</div>
+              <div className="flex flex-wrap gap-2">
+                {suggestedCategories.map((s) => (
+                  <button
+                    key={s.categoryId}
+                    className="px-2 py-1 bg-gray-100 border border-gray-200 text-gray-700 rounded text-xs font-semibold hover:bg-gray-200 transition"
+                    onClick={() => addCategory(s)}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {errors.category && (
+              <p className="text-red-500 text-xs mt-2">{errors.category}</p>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 pt-2">
             <button
-              key={s.categoryId}
-              className="mr-2 mb-2 px-2 py-1 bg-white border rounded-full text-xs"
-              onClick={() => addCategory(s)}
+              className="px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition"
+              onClick={() => {
+                setName("");
+                setDescription("");
+                setCategory(null);
+              }}
             >
-              {s.name}
+              Reset
             </button>
-          ))}
+            <button
+              className="px-3 py-1 text-xs font-semibold bg-[#820000] text-white rounded hover:bg-red-700 transition"
+              onClick={handleCreate}
+            >
+              Create
+            </button>
+          </div>
         </div>
-        {errors.category && (
-          <p className="text-red-500 text-sm mt-1">{errors.category}</p>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div className="flex justify-end gap-3 mt-4">
-        <button
-          className="px-5 py-2 rounded-full bg-gray-300 text-sm hover:bg-gray-400"
-          onClick={() => {
-            setName("");
-            setDescription("");
-            setCategory(null);
-          }}
-        >
-          Reset
-        </button>
-        <button
-          className="px-5 py-2 rounded-full bg-[#820000] text-white font-bold text-sm hover:bg-[#a00000]"
-          onClick={handleCreate}
-        >
-          Create Community
-        </button>
       </div>
     </div>
   );

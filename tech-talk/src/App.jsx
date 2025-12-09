@@ -42,6 +42,7 @@ function App() {
             {/* <Route path="notifications" element={<Notifications />} /> */}
 
             <Route path="r/:communityName" element={<CommunityName />} />
+            <Route path="community/:communityName" element={<CommunityName />} />
 
             <Route path="trending" element={<Trend />} />
             <Route path="favorites" element={<Favorites />} />

@@ -38,21 +38,21 @@ function ProfileMenu({ open, setOpen, profileRef, user, onSignOut }) {
       </NavLink>
 
       <NavLink
-        to="/app/help"
-        className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
-        onClick={() => setOpen(false)}
-      >
-        <HelpCircle className="w-5 h-5 text-gray-600 mr-3" />
-        <span className="text-sm">Help & Support</span>
-      </NavLink>
-
-      <NavLink
-        to="/app/faq"
+        to="/app/user-agreement"
         className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
         onClick={() => setOpen(false)}
       >
         <BookOpen className="w-5 h-5 text-gray-600 mr-3" />
-        <span className="text-sm">FAQ</span>
+        <span className="text-sm">User Agreement</span>
+      </NavLink>
+
+      <NavLink
+        to="/app/privacy-policy"
+        className="flex items-center px-4 py-3 hover:bg-gray-50 text-gray-800"
+        onClick={() => setOpen(false)}
+      >
+        <HelpCircle className="w-5 h-5 text-gray-600 mr-3" />
+        <span className="text-sm">Privacy & Policy</span>
       </NavLink>
 
       <div className="border-t my-1" />

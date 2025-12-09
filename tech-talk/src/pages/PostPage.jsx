@@ -80,67 +80,76 @@ const PostPage = () => {
   if (!post) return <div className="p-8">Post not found.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      {loading ? (
-        <div className="text-center text-gray-500">Loading...</div>
-      ) : post ? (
-        <>
-          <div className="bg-gradient-to-br from-[#f6d365] to-[#fda085] rounded-lg shadow-lg p-6 mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-2xl font-bold text-[#820000]">
-                {post.title}
-              </h2>
-              <span className="bg-[#820000] text-white px-2 py-1 rounded text-xs font-medium">
-                {post.community?.name}
-              </span>
+    <div className="bg-gray-50 min-h-screen py-4">
+      <div className="max-w-2xl mx-auto px-4">
+        {loading ? (
+          <div className="text-center text-gray-500">Loading...</div>
+        ) : post ? (
+          <>
+            {/* Post Header */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+              <div className="flex justify-between items-start gap-3 mb-2">
+                <h2 className="text-lg font-bold text-gray-900 flex-1">
+                  {post.title}
+                </h2>
+                <span className="bg-[#820000] text-white px-2 py-1 rounded text-xs font-semibold whitespace-nowrap">
+                  {post.community?.name}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">{post.content}</p>
+              <div className="flex gap-4 text-xs text-gray-500">
+                <span>Votes: {post.votes}</span>
+                <span>Comments: {commentCount}</span>
+                <span>{post.dateCreated?.slice(0, 10)}</span>
+              </div>
             </div>
-            <p className="text-gray-800 mb-4">{post.content}</p>
-            <div className="flex gap-6 text-sm text-gray-700">
-              <span>Votes: {post.votes}</span>
-              <span>Comments: {commentCount}</span>
-              <span>Created: {post.dateCreated?.slice(0, 10)}</span>
+
+            {/* Comments Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+              
+              {/* Comment Form */}
+              <div className="mb-3 pb-3 border-b border-gray-200">
+                <textarea
+                  className="w-full text-sm border border-gray-200 rounded p-2 mb-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#820000]"
+                  rows={2}
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  required
+                />
+                <button
+                  className="px-3 py-1 bg-[#820000] text-white text-xs font-semibold rounded hover:bg-red-700 transition"
+                  onClick={handleAddComment}
+                >
+                  Post
+                </button>
+              </div>
+
+              {/* Comments List */}
+              {comments.length === 0 ? (
+                <div className="text-xs text-gray-500">No comments yet.</div>
+              ) : (
+                <ul className="space-y-3">
+                  {comments.map((comment) => (
+                    <li key={comment.commentId} className="pb-2 border-b border-gray-100 last:border-0">
+                      <div className="text-xs font-semibold text-[#820000] mb-1">
+                        {comment.user?.displayName || "User"}
+                      </div>
+                      <div className="text-sm text-gray-700 mb-1">{comment.content}</div>
+                      <div className="text-xs text-gray-400">
+                        {comment.dateCommented?.replace("T", " ").slice(0, 16)}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold mb-4">Comments</h3>
-            <div className="mb-4">
-              <textarea
-                className="w-full border rounded p-2"
-                rows={3}
-                placeholder="Add a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                required
-              />
-              <button
-                className="mt-2 px-4 py-2 bg-[#820000] text-white rounded hover:bg-[#a83232]"
-                onClick={handleAddComment}
-              >
-                Add Comment
-              </button>
-            </div>
-            {comments.length === 0 ? (
-              <div className="text-gray-500">No comments yet.</div>
-            ) : (
-              <ul className="space-y-4">
-                {comments.map((comment) => (
-                  <li key={comment.commentId} className="border-b pb-2">
-                    <div className="font-semibold text-[#820000]">
-                      {comment.user?.displayName || "User"}
-                    </div>
-                    <div className="text-gray-800">{comment.content}</div>
-                    <div className="text-xs text-gray-400">
-                      {comment.dateCommented?.replace("T", " ").slice(0, 16)}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="text-center text-gray-500">Post not found.</div>
-      )}
+          </>
+        ) : (
+          <div className="text-center text-gray-500">Post not found.</div>
+        )}
+      </div>
     </div>
   );
 };
