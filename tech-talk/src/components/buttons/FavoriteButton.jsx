@@ -39,10 +39,10 @@ export default function FavoriteButton({
         !disabled && onToggle?.();
       }}
       disabled={disabled}
-      className={`${baseClasses} px-2 py-1 rounded text-xs ${
+      className={`${baseClasses} px-2.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all ${
         isFavorite
-          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200 hover:shadow-md"
+          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md"
       }`}
     >
       <FaBookmark size={12} />

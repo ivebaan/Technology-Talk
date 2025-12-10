@@ -10,13 +10,13 @@ export default function VoteButton({
 }) {
   return (
     <div
-      className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-sm font-semibold ${
+      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all duration-200 text-sm font-semibold shadow-sm ${
         voteStatus === "up"
           ? "bg-green-100 text-green-700"
           : voteStatus === "down"
           ? "bg-red-100 text-[#820000]"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md"
+      } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:shadow-md"}`}
     >
       <button
         onClick={(e) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import PolicyPage from "../components/PolicyPage";
+import PolicyPage from "./PolicyPage";
 
 function UserAgreement() {
   const sidebarItems = [
@@ -129,7 +129,7 @@ function UserAgreement() {
           indicates your acceptance of the updated terms.
         </p>
         <p className="text-sm text-gray-500">
-          Last updated: May 29, 2025
+          Last updated: December 10,2025
         </p>
       </div>
     ),
@@ -140,7 +140,7 @@ function UserAgreement() {
       title="User Agreement"
       sections={sectionsContent}
       sidebarItems={sidebarItems}
-      lastRevised="May 29, 2025"
+      lastRevised="December 10, 2025"
     />
   );
 }

@@ -15,7 +15,7 @@ import {
   getAllPosts,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
-import Popup from "../components/Popup";
+import Popup from "../components/cards/Popup";
 
 export default function CommunityName() {
   const { communityName } = useParams();

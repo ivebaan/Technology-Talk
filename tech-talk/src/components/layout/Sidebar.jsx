@@ -30,7 +30,7 @@ export default function Sidebar() {
   }, [currentUser]);
 
   return (
-    <aside className="w-56 bg-white p-3 border-r border-gray-200 overflow-y-auto">
+    <aside className="w-56 bg-white border-gray-200 p-3 border-r overflow-y-auto transition-colors">
       {/* Main navigation links */}
       <ul className="space-y-0.5 w-full">
         <NavLinkItem
@@ -56,7 +56,7 @@ export default function Sidebar() {
       </ul>
 
       <hr className="border-t border-gray-200 w-full my-3" />
-      <h2 className="text-gray-500 font-semibold text-xs px-3 py-1">COMMUNITIES</h2>
+      <h2 className="font-semibold text-xs px-3 py-1 text-gray-500">COMMUNITIES</h2>
       <ul className="space-y-0.5 w-full mt-2">
         {joinedCommunities.length > 0 ? (
           joinedCommunities.map((uc) => (
@@ -73,7 +73,7 @@ export default function Sidebar() {
             />
           ))
         ) : (
-          <li className="text-gray-500 px-3 py-2 text-xs">
+          <li className="px-3 py-2 text-xs text-gray-500">
             No joined communities
           </li>
         )}
@@ -106,15 +106,15 @@ const NavLinkItem = ({ to, icon, label }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
-      `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+      `flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-300 font-medium ${
         isActive
-          ? "bg-[#820000] text-white"
-          : "hover:bg-gray-200 text-[#820000]"
+          ? "bg-[#820000] text-white shadow-md"
+          : "text-gray-700 hover:bg-gray-100"
       }`
     }
   >
     {icon}
-    <span className="font-medium">{label}</span>
+    <span>{label}</span>
   </NavLink>
 );
 

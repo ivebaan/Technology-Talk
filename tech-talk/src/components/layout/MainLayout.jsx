@@ -12,13 +12,13 @@ function MainLayout() {
   useClickOutside(profileRef, () => setProfileOpen(false));
 
   return (
-    <div className="h-screen w-full bg-gray-100 relative flex flex-col overflow-hidden">
+    <div className="h-screen w-full bg-gray-50 relative flex flex-col overflow-hidden">
       <Header setProfileOpen={setProfileOpen} profileOpen={profileOpen} profileRef={profileRef} />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto bg-gray-50">
           <Outlet />
         </main>
 
