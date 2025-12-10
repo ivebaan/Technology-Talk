@@ -78,12 +78,6 @@ function Postcard({
               className="absolute right-0 mt-1 w-40 rounded-lg shadow-lg z-20 bg-white border border-gray-200"
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="block w-full text-left px-3 py-2 text-xs font-medium transition-colors hover:bg-red-50 text-gray-900 hover:text-[#820000] border-b border-gray-100">
-                Edit
-              </button>
-              <button className="block w-full text-left px-3 py-2 text-xs font-medium transition-colors hover:bg-red-50 text-gray-900 hover:text-[#820000] border-b border-gray-100">
-                Delete
-              </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();

@@ -133,7 +133,6 @@ const Communities = () => {
           </div>
         ) : (
           <div className="text-center py-12 rounded-lg bg-gray-100">
-            <div className="text-4xl mb-3">🤔</div>
             <h3 className="font-bold text-lg mb-1 text-gray-900">
               No communities found
             </h3>

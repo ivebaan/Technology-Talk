@@ -41,7 +41,7 @@ export default function Sidebar() {
         <NavLinkItem
           to="/app/communities"
           icon={<CursorArrowRippleIcon className="h-4 w-4" />}
-          label="Explore"
+          label="Explore Communities"
         />
         <NavLinkItem
           to="/app/trending"
@@ -90,7 +90,7 @@ export default function Sidebar() {
         <NavLinkItem
           to="/app/privacy-policy"
           icon={<ShieldCheckIcon className="h-4 w-4" />}
-          label="Privacy"
+          label="Privacy Policy"
         />
         <NavLinkItem
           to="/app/settings"
