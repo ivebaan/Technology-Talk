@@ -12,6 +12,7 @@ const API = axios.create({
 // Users
 export const getAllUsers = () => API.get("/users");
 export const createUser = (userData) => API.post("/users", userData);
+export const updateUser = (userId, data) => API.put(`/users/${userId}`, data);
 
 // Communities
 export const getAllCommunities = () => API.get("/community");
@@ -60,6 +61,13 @@ export const deleteFavoriteByUserAndPost = (userId, postId) =>
 // Delete favorite by ID
 export const deleteFavoriteById = (favoriteId) =>
   API.delete(`/favorites/delete/${favoriteId}`);
+
+// Comments
+export const updateComment = (commentId, data) =>
+  API.put(`/comments/update/${commentId}`, data);
+
+export const deleteComment = (commentId) =>
+  API.delete(`/comments/delete/${commentId}`);
 
 
 export default API;

@@ -10,8 +10,10 @@ import {
   Code,
   Quote,
 } from "lucide-react";
-import { createPost, getAllCommunities } from "../api/api";
+import { createPost, getAllCommunities, getJoinedCommunities } from "../api/api";
+import { useLocation } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import Popup from "../components/Popup";
 
 export default function CreatePost() {
   const { currentUser } = useContext(UserContext);
@@ -27,7 +29,11 @@ export default function CreatePost() {
   const [selectedCommunity, setSelectedCommunity] =
     useState("Select a community");
   const [selectedCommunityId, setSelectedCommunityId] = useState(null);
+  const [isMember, setIsMember] = useState(false);
+  const [joinedIds, setJoinedIds] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [popup, setPopup] = useState(null);
+  const location = useLocation();
 
   const editorRef = useRef(null);
 
@@ -36,6 +42,53 @@ export default function CreatePost() {
       .then((res) => setCommunities(res.data))
       .catch((err) => console.log(err));
   }, []);
+
+  // Keep joinedIds in sync with currentUser (run on login/change)
+  useEffect(() => {
+    if (currentUser) {
+      getJoinedCommunities(currentUser.id)
+        .then((r) => {
+          const ids = r.data.map((j) => j.community?.communityId || j.community?.id);
+          setJoinedIds(ids);
+        })
+        .catch(() => setJoinedIds([]));
+    } else {
+      setJoinedIds([]);
+    }
+  }, [currentUser]);
+
+  // If navigated from a community page, preselect that community
+  useEffect(() => {
+    if (location?.state?.communityId) {
+      const id = location.state.communityId;
+      const name = location.state.communityName || location.state.community || null;
+      if (id) {
+        setSelectedCommunityId(id);
+        if (name) setSelectedCommunity(name);
+      }
+    }
+  }, [location]);
+
+  // Check membership for selected community when user or selectedCommunityId changes
+  useEffect(() => {
+    const checkMembership = async () => {
+      if (!currentUser || !selectedCommunityId) {
+        setIsMember(false);
+        return;
+      }
+
+      try {
+        const res = await getJoinedCommunities(currentUser.id);
+        const joinedIds = res.data.map((j) => j.community?.communityId || j.community?.id);
+        setIsMember(joinedIds.includes(selectedCommunityId));
+      } catch (err) {
+        console.error("Error checking membership:", err);
+        setIsMember(false);
+      }
+    };
+
+    checkMembership();
+  }, [currentUser, selectedCommunityId]);
 
   const applyFormat = (cmd, value = null) => {
     document.execCommand(cmd, false, value);
@@ -63,12 +116,18 @@ export default function CreatePost() {
     }
 
     if (!selectedCommunityId) {
-      alert("Please select a community!");
+      setPopup({ message: "Please select a community!", type: "warning" });
       valid = false;
     }
 
     if (!currentUser) {
-      alert("You must be logged in to post.");
+      setPopup({ message: "You must be logged in to post.", type: "warning" });
+      valid = false;
+    }
+
+    // Ensure user is a member of the selected community
+    if (selectedCommunityId && currentUser && !isMember) {
+      setPopup({ message: "You must join the selected community to post.", type: "warning" });
       valid = false;
     }
 
@@ -89,7 +148,7 @@ export default function CreatePost() {
         setSelectedCommunity("Select a community");
         setSelectedCommunityId(null);
         if (editorRef.current) editorRef.current.innerHTML = "";
-        alert("Successfully Posted!");
+        setPopup({ message: "Successfully Posted!", type: "success" });
       })
       .catch((err) => console.error("Error creating post:", err));
   };
@@ -115,19 +174,27 @@ export default function CreatePost() {
 
             {openDropdown && (
               <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded shadow-md z-20 max-h-48 overflow-y-auto">
-                {communities.map((c) => (
-                  <button
-                    key={c.id}
-                    className="px-2 py-1 text-left w-full text-xs hover:bg-gray-100 border-b last:border-0 transition"
-                    onClick={() => {
-                      setSelectedCommunity(c.name);
-                      setSelectedCommunityId(c.id);
-                      setOpenDropdown(false);
-                    }}
-                  >
-                    {c.name}
-                  </button>
-                ))}
+                {communities.map((c) => {
+                  const id = c.communityId || c.id;
+                  const name = c.name || c.communityName || c.title || "Unknown";
+                  const joined = joinedIds.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      className="px-2 py-1 text-left w-full text-xs hover:bg-gray-100 border-b last:border-0 transition flex items-center justify-between"
+                      onClick={() => {
+                        setSelectedCommunity(name);
+                        setSelectedCommunityId(id);
+                        setOpenDropdown(false);
+                      }}
+                    >
+                      <span>{name}</span>
+                      {!joined && (
+                        <span className="text-xs text-gray-400 ml-2">(Not joined)</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -240,6 +307,13 @@ export default function CreatePost() {
           </div>
         </div>
       </div>
+      {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </div>
   );
 }

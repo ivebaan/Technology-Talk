@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const CommunityCard = ({
   name,
@@ -8,6 +9,12 @@ const CommunityCard = ({
   isJoined,
   onJoin,
 }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    if (name) navigate(`/app/community/${name}`);
+  };
+
   const CircleIcon = ({ bgColor, text }) => (
     <div
       className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0`}
@@ -17,7 +24,10 @@ const CommunityCard = ({
   );
 
   return (
-    <div className="border border-gray-200 p-3 rounded-lg hover:border-[#820000] hover:shadow-sm transition">
+    <div
+      onClick={handleCardClick}
+      className="border border-gray-200 p-3 rounded-lg hover:border-[#820000] hover:shadow-sm transition cursor-pointer"
+    >
       <div className="flex items-start gap-2 mb-2">
         <CircleIcon
           bgColor="bg-[#820000]"
@@ -41,7 +51,10 @@ const CommunityCard = ({
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#820000] hover:bg-red-700"
           }`}
-          onClick={() => !isJoined && onJoin && onJoin(communityId)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isJoined && onJoin) onJoin(communityId);
+          }}
           disabled={isJoined}
         >
           {isJoined ? "Joined" : "Join"}
