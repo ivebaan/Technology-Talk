@@ -5,6 +5,8 @@ import {
   getJoinedCommunities,
   getAllFavorites,
   deletePost,
+  updateComment,
+  deleteComment,
 } from "../api/api";
 import { getUserComments } from "../api/userComments";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +14,7 @@ import ProfilePostCard from "../components/cards/ProfilePostCard";
 import ProfileCommunityCard from "../components/cards/ProfileCommunityCard";
 import ProfileCommentCard from "../components/cards/ProfileCommentCard";
 import ProfileSavedCard from "../components/cards/ProfileSavedCard";
+import Popup from "../components/Popup";
 
 function Profile() {
   const { currentUser } = useContext(UserContext);
@@ -20,6 +23,7 @@ function Profile() {
   const [comments, setComments] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [activeTab, setActiveTab] = useState("Posts");
+  const [popup, setPopup] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,8 +99,9 @@ function Profile() {
                       try {
                         await deletePost(id);
                         setPosts((prev) => prev.filter((p) => p.id !== id));
+                        setPopup({ message: "Post deleted", type: "success" });
                       } catch (err) {
-                        alert("Failed to delete post.");
+                        setPopup({ message: "Failed to delete post.", type: "error" });
                       }
                     }}
                   />
@@ -125,7 +130,30 @@ function Profile() {
             ) : (
               <div className="space-y-3">
                 {comments.map((comment) => (
-                  <ProfileCommentCard key={comment.commentId} comment={comment} />
+                  <ProfileCommentCard
+                    key={comment.commentId}
+                    comment={comment}
+                    onDelete={async (id) => {
+                      try {
+                        await deleteComment(id);
+                        setComments((prev) => prev.filter((c) => c.commentId !== id));
+                        setPopup({ message: "Comment deleted", type: "success" });
+                      } catch (err) {
+                        console.error(err);
+                        setPopup({ message: "Failed to delete comment.", type: "error" });
+                      }
+                    }}
+                    onEdit={async (id, newContent) => {
+                      try {
+                        await updateComment(id, { content: newContent });
+                        setComments((prev) => prev.map((c) => (c.commentId === id ? { ...c, content: newContent } : c)));
+                        setPopup({ message: "Comment updated", type: "success" });
+                      } catch (err) {
+                        console.error(err);
+                        setPopup({ message: "Failed to update comment.", type: "error" });
+                      }
+                    }}
+                  />
                 ))}
               </div>
             ))}
@@ -144,8 +172,16 @@ function Profile() {
             ))}
         </div>
       </div>
+      {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </div>
   );
 }
 
 export default Profile;
+

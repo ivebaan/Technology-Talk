@@ -15,6 +15,7 @@ import {
   getAllPosts,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
+import Popup from "../components/Popup";
 
 export default function CommunityName() {
   const { communityName } = useParams();
@@ -24,6 +25,7 @@ export default function CommunityName() {
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
+    const [popup, setPopup] = useState(null);
   const navigate = useNavigate();
 
   // Get logged-in user from context
@@ -81,9 +83,11 @@ export default function CommunityName() {
       if (joined) {
         await leaveCommunity(userId, communityData.communityId);
         setJoined(false);
+        setPopup({ message: "You left the community!", type: "success" });
       } else {
         await joinCommunity(userId, communityData.communityId);
         setJoined(true);
+        setPopup({ message: "You joined the community!", type: "success" });
       }
     } catch (err) {
       console.error("Error joining/leaving community:", err);
@@ -112,9 +116,11 @@ export default function CommunityName() {
       } else {
         await addToFavorites(postId, userId);
         setFavoriteIds((prev) => [...prev, postId]);
+        setPopup({ message: "Post added to favorites!", type: "success" });
       }
     } catch (err) {
       console.error("Error updating favorites:", err);
+      setPopup({ message: "Failed to update favorites.", type: "error" });
     }
   };
 
@@ -163,11 +169,7 @@ export default function CommunityName() {
   };
 
   const CircleIcon = ({ bgColor, text }) => (
-    <div
-      className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg`}
-    >
-      {text}
-    </div>
+    <div className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg`}>{text}</div>
   );
 
   if (loading) {
@@ -224,7 +226,14 @@ export default function CommunityName() {
 
             <div className="flex gap-2">
               <button
-                onClick={() => navigate("/app/create-post")}
+                onClick={() =>
+                  navigate("/app/create-post", {
+                    state: {
+                      communityId: communityData.communityId,
+                      communityName: communityData.name,
+                    },
+                  })
+                }
                 className="bg-[#820000] text-white px-3 py-1.5 rounded text-xs font-semibold hover:shadow-md cursor-pointer"
               >
                 Post
@@ -263,6 +272,13 @@ export default function CommunityName() {
           )}
         </div>
       </div>
+      {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </div>
   );
 }

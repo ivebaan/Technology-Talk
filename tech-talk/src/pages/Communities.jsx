@@ -7,6 +7,7 @@ import {
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
 import { getAllCommunities, getAllCategories } from "../api/api";
+import Popup from "../components/Popup";
 
 const Communities = () => {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -16,6 +17,7 @@ const Communities = () => {
 
   const { currentUser } = useContext(UserContext);
   const [joined, setJoined] = useState([]);
+  const [popup, setPopup] = useState(null);
 
   // Fetch communities, categories, and joined communities
   useEffect(() => {
@@ -94,9 +96,11 @@ const Communities = () => {
                   if (joined.includes(communityId)) {
                     await leaveCommunity(currentUser.id, communityId);
                     setJoined((prev) => prev.filter((id) => id !== communityId));
+                                      setPopup({ message: "You left the community!", type: "success" });
                   } else {
                     await joinCommunity(currentUser.id, communityId);
                     setJoined((prev) => [...prev, communityId]);
+                                      setPopup({ message: "You joined the community!", type: "success" });
                   }
                 }}
               />
@@ -104,6 +108,13 @@ const Communities = () => {
           </div>
         ) : (
           <p className="text-gray-500 text-xs">No communities found.</p>
+        )}
+        {popup && (
+          <Popup
+            message={popup.message}
+            type={popup.type}
+            onClose={() => setPopup(null)}
+          />
         )}
       </div>
     </div>

@@ -9,11 +9,13 @@ import {
   votePost,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
+import Popup from "../components/Popup";
 
 function Trend() {
   const [posts, setPosts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
+    const [popup, setPopup] = useState(null);
   const navigate = useNavigate();
 
   // Get logged-in user from context
@@ -110,13 +112,16 @@ function Trend() {
         if (favItem) {
           await deleteFavoriteById(favItem.favoriteId);
           setFavoriteIds((prev) => prev.filter((id) => id !== postId));
+                  setPopup({ message: "Post removed from favorites!", type: "success" });
         }
       } else {
         await addToFavorites(postId, userId);
         setFavoriteIds((prev) => [...prev, postId]);
+        setPopup({ message: "Post added to favorites!", type: "success" });
       }
     } catch (err) {
       console.error("Error updating favorites:", err);
+      setPopup({ message: "Failed to update favorites.", type: "error" });
     }
   };
 
@@ -183,7 +188,16 @@ function Trend() {
         )}
       </div>
     </div>
+   
   );
+
+        {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
 }
 
 export default Trend;

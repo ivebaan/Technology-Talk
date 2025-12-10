@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAllPosts, updatePost } from "../api/api";
+import Popup from "../components/Popup";
 
 function PostEdit() {
   const { postId } = useParams();
@@ -10,6 +11,7 @@ function PostEdit() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     getAllPosts()
@@ -34,8 +36,10 @@ function PostEdit() {
     e.preventDefault();
     try {
       await updatePost(postId, { title, content });
-      navigate(`/app/post/${postId}`);
+      setPopup({ message: "Post updated successfully!", type: "success" });
+      setTimeout(() => navigate(`/app/post/${postId}`), 1500);
     } catch (err) {
+      setPopup({ message: "Failed to save post.", type: "error" });
       setError("Failed to save post.");
     }
   };
@@ -81,6 +85,13 @@ function PostEdit() {
           Cancel
         </button>
       </form>
+      {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </div>
   );
 }

@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ProfilePostCard = ({ post, onEdit, onDelete }) => {
   const navigate = useNavigate();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    setConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async (e) => {
+    e.stopPropagation();
+    if (onDelete) await onDelete(post.id);
+    setConfirmDelete(false);
+  };
+
+  const handleCancelDelete = (e) => {
+    e.stopPropagation();
+    setConfirmDelete(false);
+  };
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -26,12 +43,31 @@ const ProfilePostCard = ({ post, onEdit, onDelete }) => {
         >
           Edit
         </button>
-        <button
-          className="px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
-          onClick={() => onDelete(post.id)}
-        >
-          Delete
-        </button>
+
+        {!confirmDelete ? (
+          <button
+            className="px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
+            onClick={handleDeleteClick}
+          >
+            Delete
+          </button>
+        ) : (
+          <>
+            <button
+              className="px-2 py-1 text-xs bg-gray-100 rounded"
+              onClick={handleCancelDelete}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-2 py-1 text-xs bg-red-600 text-white rounded"
+              onClick={handleConfirmDelete}
+            >
+              Delete
+            </button>
+          </>
+        )}
+
         <button
           className="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition"
           onClick={() => navigate(`/app/post/${post.id}`)}

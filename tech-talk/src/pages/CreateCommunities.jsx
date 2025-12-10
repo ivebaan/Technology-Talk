@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { createCommunity, getAllCategories, joinCommunity } from "../api/api";
+import Popup from "../components/Popup";
 
 export default function CreateCommunities() {
   const { currentUser } = useContext(UserContext);
@@ -14,6 +15,7 @@ export default function CreateCommunities() {
     category: "",
   });
   const [suggestedCategories, setSuggestedCategories] = useState([]);
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     getAllCategories()
@@ -45,7 +47,7 @@ export default function CreateCommunities() {
       valid = false;
     }
     if (!currentUser) {
-      alert("You must be logged in to create a community.");
+      setPopup({ message: "You must be logged in to create a community.", type: "warning" });
       valid = false;
     }
 
@@ -67,7 +69,7 @@ export default function CreateCommunities() {
       // 2️⃣ Add the current user to the community
       await joinCommunity(currentUser.userId, newCommunityId);
 
-      alert("Community created successfully");
+      setPopup({ message: "Community created successfully", type: "success" });
 
       // Reset form
       setName("");
@@ -75,9 +77,7 @@ export default function CreateCommunities() {
       setCategory(null);
     } catch (err) {
       console.error(err);
-      alert(
-        "Failed to create community. Make sure the backend is running and JSON is valid."
-      );
+      setPopup({ message: "Failed to create community. Make sure the backend is running and JSON is valid.", type: "error" });
     }
   };
 
@@ -173,6 +173,14 @@ export default function CreateCommunities() {
           </div>
         </div>
       </div>
+      {popup && (
+        <Popup
+          message={popup.message}
+          type={popup.type}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </div>
   );
 }
+
