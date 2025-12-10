@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
-import { getCommentsCountForPost } from "../api/postComments";
+import { getCommentsCountForPost } from "../api/api";
 
 const API_BASE = "http://localhost:8081";
 
@@ -87,17 +87,17 @@ const PostPage = () => {
         ) : post ? (
           <>
             {/* Post Header */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-              <div className="flex justify-between items-start gap-3 mb-2">
+            <div className="bg-white rounded-xl shadow-md border-l-4 border-[#820000] p-6 mb-4">
+              <div className="flex justify-between items-start gap-3 mb-3">
                 <h2 className="text-lg font-bold text-gray-900 flex-1">
                   {post.title}
                 </h2>
-                <span className="bg-[#820000] text-white px-2 py-1 rounded text-xs font-semibold whitespace-nowrap">
+                <span className="bg-[#820000] text-white px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap">
                   {post.community?.name}
                 </span>
               </div>
-              <p className="text-sm text-gray-700 mb-3">{post.content}</p>
-              <div className="flex gap-4 text-xs text-gray-500">
+              <p className="text-sm text-gray-700 mb-4">{post.content}</p>
+              <div className="flex gap-4 text-xs text-gray-600">
                 <span>Votes: {post.votes}</span>
                 <span>Comments: {commentCount}</span>
                 <span>{post.dateCreated?.slice(0, 10)}</span>
@@ -105,13 +105,13 @@ const PostPage = () => {
             </div>
 
             {/* Comments Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Comments</h3>
+            <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4">Comments</h3>
               
               {/* Comment Form */}
-              <div className="mb-3 pb-3 border-b border-gray-200">
+              <div className="mb-4 pb-4 border-b border-gray-200">
                 <textarea
-                  className="w-full text-sm border border-gray-200 rounded p-2 mb-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#820000]"
+                  className="w-full text-sm bg-white border border-gray-200 rounded-lg p-3 mb-2 resize-none text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#820000] focus:border-[#820000]"
                   rows={2}
                   placeholder="Add a comment..."
                   value={newComment}
@@ -119,7 +119,7 @@ const PostPage = () => {
                   required
                 />
                 <button
-                  className="px-3 py-1 bg-[#820000] text-white text-xs font-semibold rounded hover:bg-red-700 transition"
+                  className="px-3 py-2 bg-[#820000] text-white text-xs font-semibold rounded-lg hover:shadow-md transition"
                   onClick={handleAddComment}
                 >
                   Post
@@ -132,12 +132,12 @@ const PostPage = () => {
               ) : (
                 <ul className="space-y-3">
                   {comments.map((comment) => (
-                    <li key={comment.commentId} className="pb-2 border-b border-gray-100 last:border-0">
+                    <li key={comment.commentId} className="pb-3 border-b border-gray-100 last:border-0">
                       <div className="text-xs font-semibold text-[#820000] mb-1">
                         {comment.user?.displayName || "User"}
                       </div>
                       <div className="text-sm text-gray-700 mb-1">{comment.content}</div>
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-500">
                         {comment.dateCommented?.replace("T", " ").slice(0, 16)}
                       </div>
                     </li>

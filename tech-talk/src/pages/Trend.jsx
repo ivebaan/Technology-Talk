@@ -9,7 +9,7 @@ import {
   votePost,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
-import Popup from "../components/Popup";
+import Popup from "../components/cards/Popup";
 
 function Trend() {
   const [posts, setPosts] = useState([]);

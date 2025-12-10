@@ -13,9 +13,9 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 text-gray-800">
       {/* Navbar */}
-      <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md sticky top-0 z-50">
+      <header className="flex justify-between items-center px-8 py-4 bg-white shadow-lg sticky top-0 z-50 border-b border-gray-100">
         <div
-          className="flex items-center space-x-3 cursor-pointer"
+          className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition"
           onClick={() => window.scrollTo(0, 0)}
         >
           <img src={logo} className="h-14 w-14 object-contain" />
@@ -23,7 +23,7 @@ const Landing = () => {
         </div>
         <div className="space-x-4">
           <button
-            className="px-4 py-2 font-medium rounded-md text-white bg-[#820000] hover:bg-[#370000] transition"
+            className="px-5 py-2.5 font-semibold rounded-lg text-white bg-[#820000] hover:bg-[#650000] shadow-md hover:shadow-lg transition duration-200"
             onClick={() => navigate("/register")}
           >
             Get Started
@@ -55,12 +55,12 @@ const Landing = () => {
             color="text-gray-800"
           />
 
-          <div className="mt-6 flex justify-center md:justify-start gap-4 flex-wrap">
+          <div className="mt-8 flex justify-center md:justify-start gap-4 flex-wrap">
             <motion.button
               onClick={() => navigate("/register")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-[#820000] text-white rounded-md font-semibold hover:bg-[#370000] transition shadow-lg"
+              className="px-8 py-3 bg-[#820000] text-white rounded-lg font-semibold hover:bg-[#650000] transition shadow-lg hover:shadow-xl"
             >
               Join Now
             </motion.button>
@@ -68,7 +68,7 @@ const Landing = () => {
               onClick={() => navigate("/login")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 border border-gray-300 rounded-md font-semibold hover:bg-gray-200 transition"
+              className="px-8 py-3 border-2 border-[#820000] text-[#820000] rounded-lg font-semibold hover:bg-[#820000] hover:text-white transition shadow-md hover:shadow-lg"
             >
               Sign In
             </motion.button>

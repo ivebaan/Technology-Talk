@@ -82,7 +82,7 @@ const ProfileCommentCard = ({ comment, onDelete, onEdit }) => {
       </div>
 
       <div className="text-xs font-semibold text-[#820000] mb-1 line-clamp-1">
-        On: {comment.post?.title || "Unknown Post"}
+        {comment.post?.title || "Unknown Post"}
       </div>
 
       {editing ? (

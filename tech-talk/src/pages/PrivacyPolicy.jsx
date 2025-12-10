@@ -1,5 +1,5 @@
 import React from "react";
-import PolicyPage from "../components/PolicyPage";
+import PolicyPage from "./PolicyPage";
 
 const PrivacyPolicy = () => {
   const sidebarItems = [
@@ -38,8 +38,7 @@ const PrivacyPolicy = () => {
 
         <ul className="list-disc ml-6 space-y-2">
           <li>
-            Posts, comments, and shared content may be visible to other students
-            and faculty members.
+            Posts, comments, and shared content may be visible to other students.
           </li>
           <li>
             Your private account details—such as email, student ID, and
@@ -62,7 +61,7 @@ const PrivacyPolicy = () => {
         <p>We may collect the following information when you use Tech-Talk:</p>
 
         <ul className="list-disc ml-6 space-y-2">
-          <li>Account information (name, student email, student ID)</li>
+          <li>Account information (display name, student email)</li>
           <li>Course or department affiliation</li>
           <li>Posts, comments, likes, and community interactions</li>
           <li>Login activity and device information</li>
@@ -76,7 +75,6 @@ const PrivacyPolicy = () => {
 
         <ul className="list-disc ml-6 space-y-2">
           <li>Improve platform performance and user experience</li>
-          <li>Send real-time notifications about activity</li>
           <li>Support moderation and ensure community safety</li>
           <li>Identify and reward active contributors through gamification</li>
         </ul>
@@ -141,9 +139,9 @@ const PrivacyPolicy = () => {
         <p>For questions or concerns regarding privacy, contact us at:</p>
 
         <ul className="list-disc ml-6 space-y-2">
-          <li>techsupport@cit.edu</li>
-          <li>CIT-U IT Department</li>
-          <li>Campus Helpdesk Office</li>
+          <li>joshuaphilip.ang@gmail.com</li>
+          <li>vankehrby.lubanga@gmail.com</li>
+          <li>rodivan@gmail.com</li>
         </ul>
       </div>
     ),
@@ -160,7 +158,7 @@ const PrivacyPolicy = () => {
       title="Privacy & Policy"
       sections={sectionsContent}
       sidebarItems={sidebarItems}
-      lastRevised="May 29, 2025"
+      lastRevised="December 10, 2025"
     />
   );
 };

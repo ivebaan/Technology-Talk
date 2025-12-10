@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../components/effects/Typewriter";
@@ -170,10 +171,18 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 font-kanit p-4 relative">
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 flex items-center gap-2 text-[#820000] hover:text-[#650000] transition font-semibold group"
+        title="Back to home"
+      >
+        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition" />
+        <span className="hidden sm:inline">Back</span>
+      </button>
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left */}
-        <div className="hidden md:flex w-1/2 bg-[#410505dc] text-white flex-col items-center p-10">
+        <div className="hidden md:flex w-1/2 bg-[#820000] text-white flex-col items-center p-10">
           <img src={pic} className="cursor-pointer max-w-1/3 mb-11" />
           <h1 className="text-3xl font-bold my-5 text-center">
             Welcome to Technology-Talk!
@@ -196,7 +205,7 @@ function Register() {
 
         {/*Right*/}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-          <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
+          <h1 className="text-4xl font-semibold mb-10 text-center text-[#820000]">
             User Registration
           </h1>
           {/*Display name*/}
@@ -205,9 +214,9 @@ function Register() {
             placeholder="Enter display name"
             value={displayName}
             onChange={handleDisplayNameChange}
-            className={`p-4 rounded-xl w-full border ${
-              errors.displayName ? "border-red-500" : "border-gray-300"
-            } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
+            className={`p-4 rounded-lg w-full border-2 ${
+              errors.displayName ? "border-red-500" : "border-gray-200"
+            } text-gray-900 mb-3 focus:outline-none focus:ring-1 focus:ring-[#820000] transition`}
           />
           {errors.displayName && (
             <p className="text-red-500 text-sm mb-2 ml-2">
@@ -221,9 +230,9 @@ function Register() {
             placeholder="Enter Institutional email"
             value={email}
             onChange={handleEmailChange}
-            className={`p-4 rounded-xl w-full border ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            } text-gray-800 mb-3 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition`}
+            className={`p-4 rounded-lg w-full border-2 ${
+              errors.email ? "border-red-500" : "border-gray-200"
+            } text-gray-900 mb-3 focus:outline-none focus:ring-1 focus:ring-[#820000] transition`}
           />
 
           {errors.email && (
@@ -245,10 +254,10 @@ function Register() {
                 setPassword(e.target.value);
                 checkPasswordStrength(e.target.value);
               }}
-              className={`p-4 rounded-xl w-full border ${passwordColor} text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition duration-300`}
+              className={`p-4 rounded-lg w-full border-2 ${passwordColor} text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#820000] transition duration-300`}
             />
             <span
-              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900 transition"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
@@ -283,10 +292,10 @@ function Register() {
                 setConfirmPassword(e.target.value);
                 checkConfirmPassword(e.target.value);
               }}
-              className={`p-4 rounded-xl w-full border ${confirmPasswordColor} text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition duration-300`}
+              className={`p-4 rounded-lg w-full border-2 ${confirmPasswordColor} text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#820000] transition duration-300`}
             />
             <span
-              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900 transition"
               onClick={() => setShowConfirm(!showConfirm)}
             >
               {showConfirm ? <FiEyeOff size={20} /> : <FiEye size={20} />}
@@ -303,7 +312,7 @@ function Register() {
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-blue-600 italic hover:underline cursor-pointer"
+              className="text-[#820000] font-semibold hover:underline cursor-pointer"
             >
               Login
             </Link>
@@ -311,20 +320,26 @@ function Register() {
 
           <button
             onClick={handleRegister}
-            className="bg-[#410505dc] hover:bg-[#300303] text-white py-3 w-full rounded-xl text-lg transition cursor-pointer mb-4"
+            className="bg-[#820000] hover:bg-[#650000] text-white py-3 w-full rounded-lg text-lg font-semibold transition shadow-md hover:shadow-lg cursor-pointer mb-4"
           >
             Register
           </button>
 
           <p className="text-xs text-gray-700 text-center">
             By continuing, you agree to our{" "}
-            <a href="#" className="underline cursor-pointer">
+            <Link
+              to="/app/user-agreement"
+              className="underline cursor-pointer hover:text-[#820000] transition"
+            >
               User Agreement
-            </a>{" "}
+            </Link>{" "}
             and acknowledge that you understand the{" "}
-            <a href="#" className="underline cursor-pointer">
+            <Link
+              to="/app/privacy-policy"
+              className="underline cursor-pointer hover:text-[#820000] transition"
+            >
               Privacy Policy
-            </a>
+            </Link>
             .
           </p>
         </div>

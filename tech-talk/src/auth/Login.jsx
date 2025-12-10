@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import pic from "../assets/images/nice.png";
 import Typewriter from "../components/effects/Typewriter";
@@ -68,11 +69,19 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-kanit p-4 relative">
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 flex items-center gap-2 text-[#820000] hover:text-[#650000] transition font-semibold group"
+        title="Back to home"
+      >
+        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition" />
+        <span className="hidden sm:inline">Back</span>
+      </button>
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Right Side - Form */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-          <h1 className="text-4xl font-semibold mb-10 text-center text-[#410505dc]">
+          <h1 className="text-4xl font-bold mb-10 text-center text-[#820000]">
             User Login
           </h1>
 
@@ -81,57 +90,57 @@ function Login() {
             placeholder="Enter Institutional Email"
             value={email}
             onChange={handleEmailChange}
-            className="p-4 rounded-xl w-full border border-gray-300 text-gray-800 mb-1 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition"
+            className="p-4 rounded-lg w-full border-2 border-gray-200 text-gray-900 mb-1 focus:outline-none focus:ring-1 focus:ring-[#820000] transition"
           />
           {errors.email && (
-            <p className="text-red-500 text-sm mb-2">{errors.email}</p>
+            <p className="text-red-500 text-sm mb-3">{errors.email}</p>
           )}
 
-          <div className="relative w-full mb-2">
+          <div className="relative w-full mb-1">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               value={password}
               onChange={handlePasswordChange}
-              className="p-4 rounded-xl w-full border mt-3 border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#410505dc] transition duration-300"
+              className="p-4 rounded-lg w-full border-2 border-gray-200 text-gray-900 mt-3 focus:outline-none focus:ring-1 focus:ring-[#820000] transition"
             />
             <span
-              className="absolute right-3 top-1/2 -translate-y-1 cursor-pointer text-gray-500"
+              className="absolute right-3 top-1/2 -translate-y-1 cursor-pointer text-gray-600 hover:text-gray-900 transition"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </span>
           </div>
           {errors.password && (
-            <p className="text-red-500 text-sm mb-2">{errors.password}</p>
+            <p className="text-red-500 text-sm mb-3">{errors.password}</p>
           )}
 
-          <p className="text-sm text-left w-full text-gray-700 mb-2">
+          <p className="text-sm text-left w-full text-gray-700 mb-4">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-blue-600 italic hover:underline cursor-pointer"
+              className="text-[#820000] font-semibold hover:underline cursor-pointer"
             >
               Register
             </Link>
           </p>
 
-          <p className="text-red-500 text-sm my-4">{errors.err}</p>
+          {errors.err && <p className="text-red-500 text-sm mb-4 font-medium">{errors.err}</p>}
 
           <button
             onClick={handleLogin}
-            className="bg-[#410505dc] hover:bg-[#300303] text-white py-3 w-full rounded-xl text-lg transition cursor-pointer mb-4"
+            className="bg-[#820000] hover:bg-[#650000] text-white py-3 w-full rounded-lg text-lg font-semibold transition shadow-md hover:shadow-lg mb-4"
           >
             Login
           </button>
 
-          <p className="text-xs text-gray-700 text-center">
+          <p className="text-xs text-gray-600 text-center">
             By continuing, you agree to our{" "}
-            <a href="#" className="underline cursor-pointer">
+            <a href="/app/user-agreement" className="text-[#820000] hover:underline cursor-pointer font-medium">
               User Agreement
             </a>{" "}
             and acknowledge that you understand the{" "}
-            <a href="#" className="underline cursor-pointer">
+            <a href="/app/privacy-policy" className="text-[#820000] hover:underline cursor-pointer font-medium">
               Privacy Policy
             </a>
             .
@@ -139,9 +148,9 @@ function Login() {
         </div>
 
         {/* Left Side - Branding */}
-        <div className="hidden md:flex w-1/2 bg-[#410505dc] text-white flex-col items-center p-10">
-          <img src={pic} className="cursor-pointer max-w-1/3 mb-11" />
-          <h1 className="text-3xl font-bold my-5 text-center">
+        <div className="hidden md:flex w-1/2 bg-[#820000] text-white flex-col items-center justify-center p-10">
+          <img src={pic} className="cursor-pointer max-w-1/3 mb-8 drop-shadow-lg" />
+          <h1 className="text-3xl font-bold my-6 text-center">
             Welcome to Technology-Talk!
           </h1>
 

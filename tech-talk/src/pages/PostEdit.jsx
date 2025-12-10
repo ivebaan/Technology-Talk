@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAllPosts, updatePost } from "../api/api";
-import Popup from "../components/Popup";
+import Popup from "../components/cards/Popup";
 
 function PostEdit() {
   const { postId } = useParams();
@@ -48,43 +48,49 @@ function PostEdit() {
   if (error) return <div className="p-8 text-red-600">{error}</div>;
 
   return (
-    <div className="max-w-xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Edit Post</h1>
-      <form onSubmit={handleSave} className="space-y-4">
-        <div>
-          <label className="block font-medium mb-1">Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
+    <div className="bg-gray-50 min-h-screen py-4 px-4">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-lg font-bold text-gray-900 mb-4">Edit Post</h1>
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <form onSubmit={handleSave} className="space-y-6">
+            <div>
+              <label className="block text-xs font-medium text-gray-900 mb-2">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#820000] focus:border-[#820000]"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-900 mb-2">Content</label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder-gray-500 min-h-[150px] resize-none focus:outline-none focus:ring-1 focus:ring-[#820000] focus:border-[#820000]"
+                rows={6}
+                required
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button
+                type="submit"
+                className="px-3 py-2 bg-[#820000] text-white text-xs font-medium rounded-lg hover:shadow-md transition"
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                className="px-3 py-2 bg-gray-200 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-300 transition"
+                onClick={() => navigate(`/app/post/${postId}`)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-        <div>
-          <label className="block font-medium mb-1">Content</label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            rows={6}
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
-        <button
-          type="button"
-          className="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          onClick={() => navigate(`/app/post/${postId}`)}
-        >
-          Cancel
-        </button>
-      </form>
+      </div>
       {popup && (
         <Popup
           message={popup.message}

@@ -178,15 +178,50 @@ function Home() {
   // --------------------------------------------------
   // UI
   // --------------------------------------------------
+  const [sortBy, setSortBy] = useState('new');
+
+  const sortedPosts = [...posts].sort((a, b) => {
+    if (sortBy === 'new') {
+      return new Date(b.dateCreated) - new Date(a.dateCreated);
+    } else if (sortBy === 'hot') {
+      return (b.votes || 0) - (a.votes || 0);
+    }
+    return 0;
+  });
+
   return (
-    <div className="bg-gray-50 min-h-screen py-4">
+    <div className="min-h-screen py-4 bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 flex gap-6">
 
         {/* POSTS - Main Feed */}
         <main className="flex-1 space-y-3">
+          {/* Feed Sorting Buttons */}
+          <div className="flex gap-2 mb-4 rounded-lg p-3 bg-white border border-gray-200">
+            <button
+              onClick={() => setSortBy('new')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                sortBy === 'new'
+                  ? 'bg-[#820000] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              New
+            </button>
+            <button
+              onClick={() => setSortBy('hot')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                sortBy === 'hot'
+                  ? 'bg-[#820000] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Hot
+            </button>
+          </div>
+
           {/* Posts Grid */}
-          {posts.length > 0 ? (
-            posts.map((post) => (
+          {sortedPosts.length > 0 ? (
+            sortedPosts.map((post) => (
               <Postcard
                 key={post.id}
                 post={post}
@@ -198,8 +233,8 @@ function Home() {
               />
             ))
           ) : (
-            <div className="bg-white rounded-lg p-8 text-center border border-gray-200">
-              <p className="text-gray-500 font-medium">No posts yet</p>
+            <div className="rounded-xl p-8 text-center border shadow-md bg-gradient-to-br from-white to-gray-50 border-gray-200">
+              <p className="font-medium text-base text-gray-500">No posts yet</p>
             </div>
           )}
         </main>

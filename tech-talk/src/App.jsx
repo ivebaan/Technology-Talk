@@ -19,39 +19,48 @@ import Favorites from "./pages/Favorites";
 import UserAgreement from "./pages/UserAgreement";
 import PostPage from "./pages/PostPage";
 import PostEdit from "./pages/PostEdit";
+import RequireAuth from "./routes/RequireAuth";
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
-        <Routes>
-          <Route index element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/technology" element={<Landing />} />
+          <Routes>
+            <Route index element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/technology" element={<Landing />} />
 
-          <Route path="/app" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="home" element={<Home />} />
-            <Route path="communities" element={<Communities />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="create-post" element={<CreatePost />} />
-            <Route path="create-community" element={<CreateCommunities />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="privacy-policy" element={<PrivacyPolicy />} />
-            {/* <Route path="notifications" element={<Notifications />} /> */}
+            {/* Protected Routes - Require Authentication */}
+            <Route
+              path="/app"
+              element={
+                <RequireAuth>
+                  <MainLayout />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<Home />} />
+              <Route path="home" element={<Home />} />
+              <Route path="communities" element={<Communities />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="create-post" element={<CreatePost />} />
+              <Route path="create-community" element={<CreateCommunities />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="privacy-policy" element={<PrivacyPolicy />} />
+              {/* <Route path="notifications" element={<Notifications />} /> */}
 
-            <Route path="r/:communityName" element={<CommunityName />} />
-            <Route path="community/:communityName" element={<CommunityName />} />
+              <Route path="r/:communityName" element={<CommunityName />} />
+              <Route path="community/:communityName" element={<CommunityName />} />
 
-            <Route path="trending" element={<Trend />} />
-            <Route path="favorites" element={<Favorites />} />
-            <Route path="user-agreement" element={<UserAgreement />} />
-            <Route path="post/:postId" element={<PostPage />} />
-            <Route path="post/:postId/edit" element={<PostEdit />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+              <Route path="trending" element={<Trend />} />
+              <Route path="favorites" element={<Favorites />} />
+              <Route path="user-agreement" element={<UserAgreement />} />
+              <Route path="post/:postId" element={<PostPage />} />
+              <Route path="post/:postId/edit" element={<PostEdit />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
     </UserProvider>
   );
 }

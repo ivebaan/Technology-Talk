@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import Popup from "../components/Popup";
+import Popup from "../components/cards/Popup";
 import { updateUser } from "../api/api";
 
 const Settings = () => {
@@ -77,71 +77,26 @@ const Settings = () => {
       case "Account":
         return (
           <div>
-            {/* Email Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Email Address</h3>
+            <div className="rounded-xl border shadow-md p-5 mb-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Email Address</h3>
               <p className="text-xs text-gray-600">{currentUser?.email || "No email"}</p>
-              <p className="text-xs text-gray-400 mt-2">Email changes will require verification</p>
-            </div>
-
-            {/* Username Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Username</h3>
-              {!editingUsername ? (
-                <>
-                  <p className="text-xs text-gray-600">{currentUser?.username || "User"}</p>
-                  <p className="text-xs text-gray-400 mt-2">You can change your username below</p>
-                  <div className="mt-3">
-                    <button
-                      onClick={() => {
-                        setEditingUsername(true);
-                        setUsernameInput(currentUser?.username || "");
-                      }}
-                      className="px-3 py-1 text-xs bg-[#820000] text-white rounded"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <input
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-sm mb-2"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSaveUsername}
-                      className="px-3 py-1 text-xs bg-[#820000] text-white rounded"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingUsername(false)}
-                      className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </>
-              )}
+              <p className="text-xs mt-2 font-medium text-gray-400">Email cannot be change</p>
             </div>
 
             {/* Display Name Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Display Name</h3>
+            <div className="rounded-xl border shadow-md p-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-3 text-gray-900">Display Name</h3>
               {!editingDisplayName ? (
                 <>
-                  <p className="text-xs text-gray-600 mb-2">{currentUser?.displayName || "User"}</p>
-                  <p className="text-xs text-gray-400">Update your display name to customize your profile</p>
+                  <p className="text-xs mb-2 text-gray-600">{currentUser?.displayName || "User"}</p>
+                  <p className="text-xs font-medium text-gray-400">Update your display name to customize your profile</p>
                   <div className="mt-3">
                     <button
                       onClick={() => {
                         setEditingDisplayName(true);
                         setDisplayNameInput(currentUser?.displayName || "");
                       }}
-                      className="px-3 py-1 text-xs bg-[#820000] text-white rounded"
+                      className="px-3 py-2 text-xs rounded-lg font-semibold transition-all shadow-sm bg-[#820000] text-white hover:shadow-md"
                     >
                       Edit
                     </button>
@@ -152,18 +107,18 @@ const Settings = () => {
                   <input
                     value={displayNameInput}
                     onChange={(e) => setDisplayNameInput(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-sm mb-2"
+                    className="w-full rounded-lg px-3 py-2.5 text-sm mb-3 transition-all border shadow-sm bg-white border-gray-200 focus:ring-[#820000] focus:outline-none focus:ring-1"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={handleSaveDisplayName}
-                      className="px-3 py-1 text-xs bg-[#820000] text-white rounded"
+                      className="px-3 py-2 text-xs rounded-lg font-semibold transition-all shadow-sm bg-[#820000] text-white hover:shadow-md"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditingDisplayName(false)}
-                      className="px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded"
+                      className="px-3 py-2 text-xs rounded-lg font-semibold transition-all shadow-sm bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md"
                     >
                       Cancel
                     </button>
@@ -178,26 +133,24 @@ const Settings = () => {
         return (
           <div>
             {/* Privacy Info */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Profile Visibility</h3>
-              <p className="text-xs text-gray-600 mb-3">Your profile is public and visible to all users</p>
+            <div className="rounded-xl border shadow-md p-5 mb-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Profile Visibility</h3>
+              <p className="text-xs mb-3 text-gray-600">Your profile is public and visible to all users</p>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-xs text-gray-600">Public Profile</span>
               </div>
             </div>
 
             {/* Community Privacy */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Community Data</h3>
+            <div className="rounded-xl border shadow-md p-5 mb-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Community Data</h3>
               <p className="text-xs text-gray-600">Your posts and comments in communities are visible to all members</p>
             </div>
 
             {/* Data Info */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Data Privacy</h3>
-              <p className="text-xs text-gray-600 mb-3">We keep your data secure and never share it with third parties</p>
-              <div className="text-xs text-gray-400 space-y-1">
+            <div className="rounded-xl border shadow-md p-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-2 text-gray-900">Data Privacy</h3>
+              <p className="text-xs mb-3 font-medium text-gray-600">We keep your data secure and never share it with third parties</p>
+              <div className="text-xs space-y-1 font-medium text-gray-400">
                 <p>• Your email is private</p>
                 <p>• Your password is encrypted</p>
                 <p>• Posts can be deleted anytime</p>
@@ -212,20 +165,22 @@ const Settings = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-4 px-4">
+    <div className="min-h-screen py-4 px-4 bg-gray-50">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-lg font-bold text-gray-900 mb-4">Settings</h1>
+        <h1 className="text-lg font-bold mb-4 text-gray-900">
+          Settings
+        </h1>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 bg-white rounded-lg border border-gray-200 p-3 mb-4">
+        <div className="flex gap-2 rounded-lg border p-3 mb-4 bg-white border-gray-200">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
               className={`text-xs font-semibold px-3 py-1 rounded transition-all ${
                 activeCategory === category
-                  ? "bg-[#820000] text-white"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? 'bg-[#820000] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               {category}
