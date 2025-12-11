@@ -53,40 +53,46 @@ function Profile() {
         {/* Profile Header */}
         <div className="rounded-xl mb-6 overflow-hidden border bg-white border-gray-200">
           {/* Cover Image */}
-          <div className="h-25 bg-gradient-to-r from-[#800000B3] via-[#660000B3] to-[#000000B3] opacity-90"></div>
+          <div className="h-25 bg-gradient-to-r bg-red-400 opacity-20"></div>
 
           {/* Profile Info */}
           <div className="px-6 pb-6 relative -mt-12">
             <div className="flex items-end gap-4 mb-4">
               <div className="w-24 h-24 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-2xl text-white border-4 bg-[#820000] border-white">
-                {(currentUser?.username || currentUser?.displayName || "U")[0].toUpperCase()}
+                {(currentUser?.username ||
+                  currentUser?.displayName ||
+                  "U")[0].toUpperCase()}
               </div>
               <div className="flex-1 pb-2">
                 <h1 className="text-3xl font-bold text-gray-900">
                   @{currentUser?.displayName || currentUser?.username || "User"}
                 </h1>
                 {currentUser?.email && (
-              <p className="text-sm mb-4 text-gray-600">
-                {currentUser.email}
-              </p>
-            )}
+                  <p className="text-sm mb-4 text-gray-600">
+                    {currentUser.email}
+                  </p>
+                )}
               </div>
             </div>
-
-            
 
             {/* Stats */}
             <div className="flex gap-6 text-sm border-t pt-4 border-gray-200">
               <div>
-                <span className="font-bold text-lg text-[#820000]">{posts.length}</span>
+                <span className="font-bold text-lg text-[#820000]">
+                  {posts.length}
+                </span>
                 <span className="text-xs ml-1 text-gray-600">Posts</span>
               </div>
               <div>
-                <span className="font-bold text-lg text-[#820000]">{communities.length}</span>
+                <span className="font-bold text-lg text-[#820000]">
+                  {communities.length}
+                </span>
                 <span className="text-xs ml-1 text-gray-600">Communities</span>
               </div>
               <div>
-                <span className="font-bold text-lg text-[#820000]">{comments.length}</span>
+                <span className="font-bold text-lg text-[#820000]">
+                  {comments.length}
+                </span>
                 <span className="text-xs ml-1 text-gray-600">Comments</span>
               </div>
             </div>
@@ -101,8 +107,8 @@ function Profile() {
                 key={tab}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === tab
-                    ? 'bg-[#820000] text-white'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? "bg-[#820000] text-white"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
                 onClick={() => setActiveTab(tab)}
               >
@@ -137,7 +143,10 @@ function Profile() {
                         setPosts((prev) => prev.filter((p) => p.id !== id));
                         setPopup({ message: "Post deleted", type: "success" });
                       } catch (err) {
-                        setPopup({ message: "Failed to delete post.", type: "error" });
+                        setPopup({
+                          message: "Failed to delete post.",
+                          type: "error",
+                        });
                       }
                     }}
                   />
@@ -183,12 +192,20 @@ function Profile() {
                       try {
                         console.log("Deleting comment:", id);
                         await deleteComment(id);
-                        setComments((prev) => prev.filter((c) => c.commentId !== id));
-                        setPopup({ message: "Comment deleted", type: "success" });
+                        setComments((prev) =>
+                          prev.filter((c) => c.commentId !== id)
+                        );
+                        setPopup({
+                          message: "Comment deleted",
+                          type: "success",
+                        });
                         setTimeout(() => setPopup(null), 2000);
                       } catch (err) {
                         console.error("Delete error:", err);
-                        setPopup({ message: "Failed to delete comment.", type: "error" });
+                        setPopup({
+                          message: "Failed to delete comment.",
+                          type: "error",
+                        });
                         setTimeout(() => setPopup(null), 2000);
                       }
                     }}
@@ -196,29 +213,43 @@ function Profile() {
                       try {
                         console.log("Editing comment:", id, newContent);
                         // Find the comment to get full data
-                        const commentToUpdate = comments.find((c) => c.commentId === id);
+                        const commentToUpdate = comments.find(
+                          (c) => c.commentId === id
+                        );
                         if (!commentToUpdate) {
                           throw new Error("Comment not found");
                         }
-                        
+
                         // Send complete comment data with updated content
                         const payload = {
                           content: newContent,
                           post: commentToUpdate.post,
                           user: commentToUpdate.user,
-                          dateCommented: commentToUpdate.dateCommented
+                          dateCommented: commentToUpdate.dateCommented,
                         };
-                        
+
                         console.log("Sending payload:", payload);
                         const response = await updateComment(id, payload);
                         console.log("Update response:", response);
-                        
-                        setComments((prev) => prev.map((c) => (c.commentId === id ? { ...c, content: newContent } : c)));
-                        setPopup({ message: "Comment updated", type: "success" });
+
+                        setComments((prev) =>
+                          prev.map((c) =>
+                            c.commentId === id
+                              ? { ...c, content: newContent }
+                              : c
+                          )
+                        );
+                        setPopup({
+                          message: "Comment updated",
+                          type: "success",
+                        });
                         setTimeout(() => setPopup(null), 2000);
                       } catch (err) {
                         console.error("Edit error:", err);
-                        setPopup({ message: "Failed to update comment.", type: "error" });
+                        setPopup({
+                          message: "Failed to update comment.",
+                          type: "error",
+                        });
                         setTimeout(() => setPopup(null), 2000);
                       }
                     }}
@@ -258,4 +289,3 @@ function Profile() {
 }
 
 export default Profile;
-

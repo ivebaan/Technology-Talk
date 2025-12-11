@@ -1,6 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
-import { createCommunity, getAllCategories, joinCommunity, createCategory } from "../api/api";
+import {
+  createCommunity,
+  getAllCategories,
+  joinCommunity,
+  createCategory,
+  getAllCommunities,
+} from "../api/api";
 import Popup from "../components/cards/Popup";
 
 export default function CreateCommunities() {
@@ -19,10 +25,17 @@ export default function CreateCommunities() {
   const [showNewCategoryForm, setShowNewCategoryForm] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [creatingCategory, setCreatingCategory] = useState(false);
+  const [existingCommunities, setExistingCommunities] = useState([]);
 
   useEffect(() => {
+    // Fetch categories
     getAllCategories()
       .then((res) => setSuggestedCategories(res.data))
+      .catch((err) => console.log(err));
+
+    // Fetch existing communities
+    getAllCommunities()
+      .then((res) => setExistingCommunities(res.data))
       .catch((err) => console.log(err));
   }, []);
 
@@ -36,6 +49,15 @@ export default function CreateCommunities() {
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) {
       setPopup({ message: "Category name is required", type: "warning" });
+      return;
+    }
+
+    const exists = suggestedCategories.find(
+      (c) =>
+        c.name.toLowerCase().trim() === newCategoryName.trim().toLowerCase()
+    );
+    if (exists) {
+      setPopup({ message: "Category already exists", type: "warning" });
       return;
     }
 
@@ -73,7 +95,18 @@ export default function CreateCommunities() {
       valid = false;
     }
     if (!currentUser) {
-      setPopup({ message: "You must be logged in to create a community.", type: "warning" });
+      setPopup({
+        message: "You must be logged in to create a community.",
+        type: "warning",
+      });
+      valid = false;
+    }
+
+    const existCommunity = existingCommunities.find(
+      (c) => c.name.toLowerCase().trim() === name.trim().toLowerCase()
+    );
+    if (existCommunity) {
+      newErrors.name = "Community already exists";
       valid = false;
     }
 
@@ -84,15 +117,13 @@ export default function CreateCommunities() {
       const communityData = {
         name: name.trim(),
         description: description.trim(),
-        createdBy: { userId: currentUser.userId }, // Backend expects UserEntity
-        category: { categoryId: category.categoryId }, // Backend expects CategoryEntity
+        createdBy: { userId: currentUser.userId },
+        category: { categoryId: category.categoryId },
       };
 
-      // 1️⃣ Create the community
       const res = await createCommunity(communityData);
       const newCommunityId = res.data.communityId;
 
-      // 2️⃣ Add the current user to the community
       await joinCommunity(currentUser.userId, newCommunityId);
 
       setPopup({ message: "Community created successfully", type: "success" });
@@ -101,21 +132,27 @@ export default function CreateCommunities() {
       setName("");
       setDescription("");
       setCategory(null);
+
+      // Update existing communities list
+      setExistingCommunities((prev) => [...prev, { name: name.trim() }]);
     } catch (err) {
       console.error(err);
-      setPopup({ message: "Failed to create community. Make sure the backend is running and JSON is valid.", type: "error" });
+      setPopup({ message: "Failed to create community.", type: "error" });
     }
   };
 
   return (
     <div className="bg-gray-50 min-h-screen py-4 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-lg font-bold text-gray-900 mb-4">Create Community</h1>
-
+        <h1 className="text-lg font-bold text-gray-900 mb-4">
+          Create Community
+        </h1>
         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 space-y-6">
           {/* Name */}
           <div>
-            <label className="text-xs font-medium text-gray-900">Community Name</label>
+            <label className="text-xs font-medium text-gray-900">
+              Community Name
+            </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -129,7 +166,9 @@ export default function CreateCommunities() {
 
           {/* Description */}
           <div>
-            <label className="text-xs font-medium text-gray-900">Description</label>
+            <label className="text-xs font-medium text-gray-900">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -143,7 +182,9 @@ export default function CreateCommunities() {
 
           {/* Category */}
           <div>
-            <label className="text-xs font-medium text-gray-900">Category</label>
+            <label className="text-xs font-medium text-gray-900">
+              Category
+            </label>
 
             {category && (
               <div className="flex flex-wrap gap-2 mt-2 mb-2">
@@ -248,4 +289,3 @@ export default function CreateCommunities() {
     </div>
   );
 }
-
