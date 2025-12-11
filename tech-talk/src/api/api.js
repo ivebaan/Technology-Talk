@@ -16,6 +16,9 @@ export const createUser = (userData) => API.post("/users", userData);
 // Update existing user
 export const updateUser = (userId, data) => API.put(`/users/${userId}`, data);
 
+// Delete a user
+export const deleteUser = (userId) => API.delete(`/users/delete/${userId}`);
+
 // Communities
 
 // Get all communities
