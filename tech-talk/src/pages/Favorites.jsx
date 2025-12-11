@@ -22,7 +22,7 @@ function Favorites() {
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
       if (!userId) {
-        console.warn("⚠️ No userId found");
+        console.warn("No userId found");
         return;
       }
 
@@ -40,12 +40,10 @@ function Favorites() {
           .filter((f) => f.post && f.user?.id === userId)
           .map((f) => f.post.id);
 
-        console.log("❤️ User favorite IDs:", userFavs);
         setFavoriteIds(userFavs);
 
         // Get only the favorited posts
         const favPosts = allPosts.filter((post) => userFavs.includes(post.id));
-        console.log("📝 Favorited posts:", favPosts);
         setFavoritePosts(favPosts);
       } catch (err) {
         console.error("Error fetching favorites:", err);
@@ -88,14 +86,14 @@ function Favorites() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("⚠️ No userId found");
+      console.warn("No userId found");
       return;
     }
 
     // Store old posts in case we need to revert
     const oldPosts = favoritePosts;
 
-    // ✅ Instant UI update
+    // Instant UI update
     setFavoritePosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === postId) {
@@ -120,7 +118,7 @@ function Favorites() {
       })
     );
 
-    // ✅ Sync with backend
+    // Sync with backend
     try {
       const response = await votePost(postId, type, userId);
       setFavoritePosts((prevPosts) =>
@@ -129,7 +127,7 @@ function Favorites() {
         )
       );
     } catch (err) {
-      console.error("❌ Vote sync failed:", err);
+      console.error("Vote sync failed:", err);
       // Revert on error
       setFavoritePosts(oldPosts);
     }

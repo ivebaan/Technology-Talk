@@ -48,7 +48,6 @@ export default function CommunityName() {
           (post) => post.community?.id === community.communityId
         );
         setCommunityPosts(filteredPosts);
-        console.log(`📝 Posts for community ${communityName}:`, filteredPosts);
 
         // Check if user is in joined communities
         if (userId) {
@@ -126,7 +125,7 @@ export default function CommunityName() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("⚠️ No userId found");
+      console.warn("No userId found");
       return;
     }
 
@@ -164,7 +163,7 @@ export default function CommunityName() {
         )
       );
     } catch (err) {
-      console.error("❌ Vote sync failed:", err);
+      console.error("Vote sync failed:", err);
     }
   };
 

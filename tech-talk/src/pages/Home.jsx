@@ -22,9 +22,7 @@ function Home() {
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
 
-  // --------------------------------------------------
-  // FETCH DATA
-  // --------------------------------------------------
+ // Fetch Data
   const fetchAllData = async () => {
     try {
       const [communityRes, postsRes, favRes] = await Promise.all([
@@ -35,7 +33,7 @@ function Home() {
 
       setCommunities(communityRes.data);
 
-      // ✅ Posts from Spring Boot backend
+      // Posts from Spring Boot backend
       const normalizedPosts = postsRes.data
         .map((post) => ({
           ...post,
@@ -45,18 +43,16 @@ function Home() {
           (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
         );
 
-      console.log("📝 Posts loaded:", normalizedPosts);
       setPosts(normalizedPosts);
 
-      // ✅ Normalize favorites
+      // Normalize favorites
       const userFavorites = favRes.data
         .filter((fav) => fav.post && fav.user?.id === userId)
         .map((fav) => fav.post.id);
 
-      console.log("❤️ Favorites:", userFavorites);
       setFavorites(userFavorites);
     } catch (err) {
-      console.error("❌ Failed to fetch data:", err);
+      console.error("Failed to fetch data:", err);
     }
   };
 
@@ -66,7 +62,7 @@ function Home() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("⚠️ No userId found");
+      console.warn("No userId found");
       return;
     }
 
@@ -75,7 +71,7 @@ function Home() {
     // Store the old state in case we need to revert
     const oldPosts = posts;
 
-    // ✅ Instant UI update
+    // Instant UI update
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === postId) {
@@ -87,7 +83,7 @@ function Home() {
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes += post.voteStatus === "down" ? 2 : 1;
-            console.log("👍 Adding upvote, new votes:", newVotes);
+            console.log("Adding upvote, new votes:", newVotes);
             return { ...post, votes: newVotes, voteStatus: "up" };
           } else if (type === "down") {
             if (post.voteStatus === "down") {
@@ -96,7 +92,7 @@ function Home() {
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes -= post.voteStatus === "up" ? 2 : 1;
-            console.log("👎 Adding downvote, new votes:", newVotes);
+            console.log("Adding downvote, new votes:", newVotes);
             return { ...post, votes: newVotes, voteStatus: "down" };
           }
         }
@@ -108,7 +104,7 @@ function Home() {
     try {
       console.log(`📤 Sending vote to backend: PATCH /posts/${postId}/vote?userId=${userId}&type=${type}`);
       const response = await votePost(postId, type, userId);
-      console.log("✅ Vote response:", response.data);
+      console.log("Vote response:", response.data);
       
       // Update the specific post with the backend response (which includes updated votes count)
       setPosts((prevPosts) =>
@@ -117,7 +113,7 @@ function Home() {
         )
       );
     } catch (err) {
-      console.error("❌ Vote sync failed:", err);
+      console.error("Vote sync failed:", err);
       console.error("Error status:", err.response?.status);
       console.error("Error data:", err.response?.data);
       console.error("Error message:", err.message);
@@ -127,17 +123,13 @@ function Home() {
     }
   };
 
-  // --------------------------------------------------
-  // THREE DOTS DROPDOWN CONTROL
-  // --------------------------------------------------
+ // Three Dots
   const handleThreeDots = (e, id) => {
     e.stopPropagation();
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
-  // --------------------------------------------------
-  // FAVORITES TOGGLE
-  // --------------------------------------------------
+ // Favorites
   const handleAddToFavorites = async (postId) => {
     try {
       if (!userId) return;
@@ -145,7 +137,7 @@ function Home() {
       const isFavorite = favorites.includes(postId);
 
       if (isFavorite) {
-        // --- Remove favorite ---
+        // Remove Favorite
         const favRes = await getAllFavorites();
 
         const favItem = favRes.data.find(
@@ -162,7 +154,7 @@ function Home() {
         await addToFavorites(postId, userId);
       }
 
-      // ✅ Refresh favorite list
+      // Refresh favorite list
       const updatedFavs = await getAllFavorites();
 
       const updatedUserFavorites = updatedFavs.data
@@ -171,7 +163,7 @@ function Home() {
 
       setFavorites(updatedUserFavorites);
     } catch (err) {
-      console.error("❌ Favorite update failed:", err);
+      console.error("Favorite update failed:", err);
     }
   };
 
