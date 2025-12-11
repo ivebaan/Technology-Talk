@@ -1,16 +1,20 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import Popup from "../components/cards/Popup";
-import { updateUser } from "../api/api";
+import { updateUser, deleteUser } from "../api/api";
+import API from "../api/api";
 
 const Settings = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("Account");
   const [editingUsername, setEditingUsername] = useState(false);
   const [editingDisplayName, setEditingDisplayName] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [displayNameInput, setDisplayNameInput] = useState("");
   const [popup, setPopup] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const categories = ["Account", "Privacy"];
 
@@ -72,6 +76,21 @@ const Settings = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUser(currentUser.id);
+      setPopup({ message: "Account deleted successfully", type: "success" });
+      setCurrentUser(null);
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setPopup({ message: "Failed to delete account", type: "error" });
+    }
+    setShowDeleteConfirm(false);
+  };
+
   const renderContent = () => {
     switch (activeCategory) {
       case "Account":
@@ -126,6 +145,45 @@ const Settings = () => {
                 </>
               )}
             </div>
+
+            {/* Delete Account Section */}
+            <div className="rounded-xl border shadow-md p-5 mt-5 transition-all bg-gradient-to-br from-white to-gray-50 border-red-200 hover:border-red-400 hover:shadow-lg">
+              <h3 className="text-base font-semibold mb-2 text-red-700">Delete Account</h3>
+              <p className="text-xs mb-3 text-gray-600">Permanently delete your account and all associated data</p>
+              <p className="text-xs font-medium text-red-500 mb-3">⚠️ This action cannot be undone</p>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="px-3 py-2 text-xs rounded-lg font-semibold transition-all shadow-sm bg-red-600 text-white hover:bg-red-700 hover:shadow-md"
+              >
+                Delete Account
+              </button>
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+                <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm mx-4 pointer-events-auto">
+                  <h2 className="text-lg font-bold text-gray-900 mb-3">Confirm Delete Account</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-sm bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-sm bg-red-600 text-white hover:bg-red-700 hover:shadow-md"
+                    >
+                      Delete Permanently
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
 
