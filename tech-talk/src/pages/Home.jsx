@@ -18,11 +18,10 @@ function Home() {
   const [communities, setCommunities] = useState([]);
   const [favorites, setFavorites] = useState([]);
 
-  // Get logged-in user from context
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
 
- // Fetch Data
+  // Fetch Data
   const fetchAllData = async () => {
     try {
       const [communityRes, postsRes, favRes] = await Promise.all([
@@ -33,19 +32,15 @@ function Home() {
 
       setCommunities(communityRes.data);
 
-      // Posts from Spring Boot backend
       const normalizedPosts = postsRes.data
         .map((post) => ({
           ...post,
-          voteStatus: null,  // Voting UI will show user's votes after they vote
+          voteStatus: null,
         }))
-        .sort(
-          (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
-        );
+        .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
 
       setPosts(normalizedPosts);
 
-      // Normalize favorites
       const userFavorites = favRes.data
         .filter((fav) => fav.post && fav.user?.id === userId)
         .map((fav) => fav.post.id);
@@ -66,9 +61,6 @@ function Home() {
       return;
     }
 
-    console.log(`🔵 Voting - postId: ${postId}, type: ${type}, userId: ${userId}`);
-
-    // Store the old state in case we need to revert
     const oldPosts = posts;
 
     // Instant UI update
@@ -76,23 +68,22 @@ function Home() {
       prevPosts.map((post) => {
         if (post.id === postId) {
           let newVotes = post.votes || 0;
+
           if (type === "up") {
             if (post.voteStatus === "up") {
               newVotes -= 1;
-              console.log("↩️ Removing upvote");
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes += post.voteStatus === "down" ? 2 : 1;
-            console.log("Adding upvote, new votes:", newVotes);
             return { ...post, votes: newVotes, voteStatus: "up" };
-          } else if (type === "down") {
+          }
+
+          if (type === "down") {
             if (post.voteStatus === "down") {
               newVotes += 1;
-              console.log("↩️ Removing downvote");
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes -= post.voteStatus === "up" ? 2 : 1;
-            console.log("Adding downvote, new votes:", newVotes);
             return { ...post, votes: newVotes, voteStatus: "down" };
           }
         }
@@ -102,11 +93,14 @@ function Home() {
 
     // ✅ Sync with backend
     try {
-      console.log(`📤 Sending vote to backend: PATCH /posts/${postId}/vote?userId=${userId}&type=${type}`);
+      console.log(
+        `Sending vote to backend: PATCH /posts/${postId}/vote?userId=${userId}&type=${type}`
+      );
+
       const response = await votePost(postId, type, userId);
+
       console.log("Vote response:", response.data);
-      
-      // Update the specific post with the backend response (which includes updated votes count)
+
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.id === postId ? { ...post, votes: response.data.votes } : post
@@ -117,19 +111,16 @@ function Home() {
       console.error("Error status:", err.response?.status);
       console.error("Error data:", err.response?.data);
       console.error("Error message:", err.message);
-      
-      // Revert UI on error
+
       setPosts(oldPosts);
     }
   };
 
- // Three Dots
   const handleThreeDots = (e, id) => {
     e.stopPropagation();
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
- // Favorites
   const handleAddToFavorites = async (postId) => {
     try {
       if (!userId) return;
@@ -137,24 +128,19 @@ function Home() {
       const isFavorite = favorites.includes(postId);
 
       if (isFavorite) {
-        // Remove Favorite
         const favRes = await getAllFavorites();
 
         const favItem = favRes.data.find(
-          (f) =>
-            f.post?.postId === postId &&
-            f.user?.id === userId
+          (f) => f.post?.postId === postId && f.user?.id === userId
         );
 
         if (favItem) {
           await deleteFavoriteById(favItem.favoriteId);
         }
       } else {
-        // --- Add favorite ---
         await addToFavorites(postId, userId);
       }
 
-      // Refresh favorite list
       const updatedFavs = await getAllFavorites();
 
       const updatedUserFavorites = updatedFavs.data
@@ -167,15 +153,12 @@ function Home() {
     }
   };
 
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
-  const [sortBy, setSortBy] = useState('new');
+  const [sortBy, setSortBy] = useState("new");
 
   const sortedPosts = [...posts].sort((a, b) => {
-    if (sortBy === 'new') {
+    if (sortBy === "new") {
       return new Date(b.dateCreated) - new Date(a.dateCreated);
-    } else if (sortBy === 'hot') {
+    } else if (sortBy === "hot") {
       return (b.votes || 0) - (a.votes || 0);
     }
     return 0;
@@ -184,34 +167,30 @@ function Home() {
   return (
     <div className="min-h-screen py-4 bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 flex gap-6">
-
-        {/* POSTS - Main Feed */}
         <main className="flex-1 space-y-3">
-          {/* Feed Sorting Buttons */}
           <div className="flex gap-2 mb-4 rounded-lg p-3 bg-white border border-gray-200">
             <button
-              onClick={() => setSortBy('new')}
+              onClick={() => setSortBy("new")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                sortBy === 'new'
-                  ? 'bg-[#820000] text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                sortBy === "new"
+                  ? "bg-[#820000] text-white"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               New
             </button>
             <button
-              onClick={() => setSortBy('hot')}
+              onClick={() => setSortBy("hot")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                sortBy === 'hot'
-                  ? 'bg-[#820000] text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                sortBy === "hot"
+                  ? "bg-[#820000] text-white"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               Hot
             </button>
           </div>
 
-          {/* Posts Grid */}
           {sortedPosts.length > 0 ? (
             sortedPosts.map((post) => (
               <Postcard
@@ -226,18 +205,18 @@ function Home() {
             ))
           ) : (
             <div className="rounded-xl p-8 text-center border shadow-md bg-gradient-to-br from-white to-gray-50 border-gray-200">
-              <p className="font-medium text-base text-gray-500">No posts yet</p>
+              <p className="font-medium text-base text-gray-500">
+                No posts yet
+              </p>
             </div>
           )}
         </main>
 
-        {/* SIDEBAR - Communities */}
         <aside className="w-80 flex-shrink-0">
           <div className="sticky top-4">
             <PopularCommunitiesCard communities={communities} />
           </div>
         </aside>
-
       </div>
     </div>
   );
