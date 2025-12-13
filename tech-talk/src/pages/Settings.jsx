@@ -9,43 +9,12 @@ const Settings = () => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("Account");
-  const [editingUsername, setEditingUsername] = useState(false);
   const [editingDisplayName, setEditingDisplayName] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
   const [displayNameInput, setDisplayNameInput] = useState("");
   const [popup, setPopup] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const categories = ["Account", "Privacy"];
-
-  const handleSaveUsername = async () => {
-    if (!usernameInput || usernameInput.trim() === "") {
-      setPopup({ message: "Username cannot be empty", type: "error" });
-      return;
-    }
-    try {
-      // Send a full payload so backend doesn't clear other fields like email
-      const payload = {
-        id: currentUser.id,
-        username: usernameInput,
-        email: currentUser.email,
-        displayName: currentUser.displayName,
-      };
-      const res = await updateUser(currentUser.id, payload);
-      const resData = res?.data || {};
-      const updatedUser = {
-        id: resData.id ?? payload.id,
-        email: resData.email ?? payload.email,
-        username: resData.username ?? payload.username,
-        displayName: resData.displayName ?? payload.displayName,
-      };
-      setCurrentUser(updatedUser);
-      setEditingUsername(false);
-      setPopup({ message: "Username updated", type: "success" });
-    } catch (err) {
-      setPopup({ message: "Failed to update username", type: "error" });
-    }
-  };
 
   const handleSaveDisplayName = async () => {
     if (!displayNameInput || displayNameInput.trim() === "") {
@@ -56,7 +25,6 @@ const Settings = () => {
       // Send full payload including email to avoid backend overwriting other fields
       const payload = {
         id: currentUser.id,
-        username: currentUser.username,
         email: currentUser.email,
         displayName: displayNameInput,
       };
@@ -65,7 +33,6 @@ const Settings = () => {
       const updatedUser = {
         id: resData.id ?? payload.id,
         email: resData.email ?? payload.email,
-        username: resData.username ?? payload.username,
         displayName: resData.displayName ?? payload.displayName,
       };
       setCurrentUser(updatedUser);
@@ -158,8 +125,7 @@ const Settings = () => {
               )}
             </div>
 
-            {/* Delete Account Section */}
-            {/* <div className="rounded-xl border shadow-md p-5 mt-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
+            <div className="rounded-xl border shadow-md p-5 mt-5 transition-all bg-gradient-to-br from-white to-gray-50 border-gray-200 hover:border-[#820000] hover:shadow-lg">
               <h3 className="text-base font-semibold mb-2 text-red-700">
                 Delete Account
               </h3>
@@ -175,7 +141,7 @@ const Settings = () => {
               >
                 Delete Account
               </button>
-            </div> */}
+            </div>
 
             {/* Delete Confirmation Modal */}
             {showDeleteConfirm && (
