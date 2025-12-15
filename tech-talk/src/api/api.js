@@ -19,7 +19,7 @@ export const updateUser = (userId, data) => API.put(`/users/${userId}`, data);
 // Delete a user
 export const deleteUser = (userId) => API.delete(`/users/${userId}`);
 
-// Communities  
+// Communities
 
 // Get all communities
 export const getAllCommunities = () => API.get("/community");

@@ -50,7 +50,6 @@ const Communities = () => {
       const filteredData = recommended.filter(
         (item) => item.category?.name === activeCategory
       );
-      console.log(`Filtered for ${activeCategory}:`, filteredData);
       setFiltered(filteredData);
     }
   }, [activeCategory, recommended]);

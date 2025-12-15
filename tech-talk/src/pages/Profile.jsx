@@ -190,7 +190,6 @@ function Profile() {
                     comment={comment}
                     onDelete={async (id) => {
                       try {
-                        console.log("Deleting comment:", id);
                         await deleteComment(id);
                         setComments((prev) =>
                           prev.filter((c) => c.commentId !== id)
@@ -211,7 +210,6 @@ function Profile() {
                     }}
                     onEdit={async (id, newContent) => {
                       try {
-                        console.log("Editing comment:", id, newContent);
                         // Find the comment to get full data
                         const commentToUpdate = comments.find(
                           (c) => c.commentId === id
@@ -227,10 +225,6 @@ function Profile() {
                           user: commentToUpdate.user,
                           dateCommented: commentToUpdate.dateCommented,
                         };
-
-                        console.log("Sending payload:", payload);
-                        const response = await updateComment(id, payload);
-                        console.log("Update response:", response);
 
                         setComments((prev) =>
                           prev.map((c) =>

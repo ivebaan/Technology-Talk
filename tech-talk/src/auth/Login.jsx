@@ -75,7 +75,10 @@ function Login() {
         className="absolute top-6 left-6 flex items-center gap-2 text-[#820000] hover:text-[#650000] transition font-semibold group"
         title="Back to home"
       >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition" />
+        <ArrowLeft
+          size={20}
+          className="group-hover:-translate-x-1 transition"
+        />
         <span className="hidden sm:inline">Back</span>
       </button>
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -125,7 +128,11 @@ function Login() {
             </Link>
           </p>
 
-          {errors.err && <p className="text-red-500 text-sm mb-4 font-medium">{errors.err}</p>}
+          {errors.err && (
+            <p className="text-red-500 text-sm mb-4 font-medium">
+              {errors.err}
+            </p>
+          )}
 
           <button
             onClick={handleLogin}
@@ -136,11 +143,17 @@ function Login() {
 
           <p className="text-xs text-gray-600 text-center">
             By continuing, you agree to our{" "}
-            <a href="/app/user-agreement" className="text-[#820000] hover:underline cursor-pointer font-medium">
+            <a
+              href="/app/user-agreement"
+              className="text-[#820000] hover:underline cursor-pointer font-medium"
+            >
               User Agreement
             </a>{" "}
             and acknowledge that you understand the{" "}
-            <a href="/app/privacy-policy" className="text-[#820000] hover:underline cursor-pointer font-medium">
+            <a
+              href="/app/privacy-policy"
+              className="text-[#820000] hover:underline cursor-pointer font-medium"
+            >
               Privacy Policy
             </a>
             .
@@ -149,7 +162,10 @@ function Login() {
 
         {/* Left Side - Branding */}
         <div className="hidden md:flex w-1/2 bg-[#820000] text-white flex-col items-center justify-center p-10">
-          <img src={pic} className="cursor-pointer max-w-1/3 mb-8 drop-shadow-lg" />
+          <img
+            src={pic}
+            className="cursor-pointer max-w-1/3 mb-8 drop-shadow-lg"
+          />
           <h1 className="text-3xl font-bold my-6 text-center">
             Welcome to Technology-Talk!
           </h1>

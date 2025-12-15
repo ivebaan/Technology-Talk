@@ -10,10 +10,14 @@ import {
   Code,
   Quote,
 } from "lucide-react";
-import { createPost, getAllCommunities, getJoinedCommunities } from "../api/api";
+import {
+  createPost,
+  getAllCommunities,
+  getJoinedCommunities,
+} from "../../api/api";
 import { useLocation } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
-import Popup from "../components/cards/Popup";
+import { UserContext } from "../../context/UserContext";
+import Popup from "../../components/cards/Popup";
 
 export default function CreatePost() {
   const { currentUser } = useContext(UserContext);
@@ -48,7 +52,9 @@ export default function CreatePost() {
     if (currentUser) {
       getJoinedCommunities(currentUser.id)
         .then((r) => {
-          const ids = r.data.map((j) => j.community?.communityId || j.community?.id);
+          const ids = r.data.map(
+            (j) => j.community?.communityId || j.community?.id
+          );
           setJoinedIds(ids);
         })
         .catch(() => setJoinedIds([]));
@@ -61,7 +67,8 @@ export default function CreatePost() {
   useEffect(() => {
     if (location?.state?.communityId) {
       const id = location.state.communityId;
-      const name = location.state.communityName || location.state.community || null;
+      const name =
+        location.state.communityName || location.state.community || null;
       if (id) {
         setSelectedCommunityId(id);
         if (name) setSelectedCommunity(name);
@@ -79,7 +86,9 @@ export default function CreatePost() {
 
       try {
         const res = await getJoinedCommunities(currentUser.id);
-        const joinedIds = res.data.map((j) => j.community?.communityId || j.community?.id);
+        const joinedIds = res.data.map(
+          (j) => j.community?.communityId || j.community?.id
+        );
         setIsMember(joinedIds.includes(selectedCommunityId));
       } catch (err) {
         console.error("Error checking membership:", err);
@@ -127,7 +136,10 @@ export default function CreatePost() {
 
     // Ensure user is a member of the selected community
     if (selectedCommunityId && currentUser && !isMember) {
-      setPopup({ message: "You must join the selected community to post.", type: "warning" });
+      setPopup({
+        message: "You must join the selected community to post.",
+        type: "warning",
+      });
       valid = false;
     }
 
@@ -176,7 +188,8 @@ export default function CreatePost() {
               <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-lg shadow-md z-20 max-h-48 overflow-y-auto">
                 {communities.map((c) => {
                   const id = c.communityId || c.id;
-                  const name = c.name || c.communityName || c.title || "Unknown";
+                  const name =
+                    c.name || c.communityName || c.title || "Unknown";
                   const joined = joinedIds.includes(id);
                   return (
                     <button
@@ -190,7 +203,9 @@ export default function CreatePost() {
                     >
                       <span>{name}</span>
                       {!joined && (
-                        <span className="text-xs text-gray-400 ml-2">(Not joined)</span>
+                        <span className="text-xs text-gray-400 ml-2">
+                          (Not joined)
+                        </span>
                       )}
                     </button>
                   );
@@ -225,7 +240,9 @@ export default function CreatePost() {
             <label className="text-xs font-semibold text-gray-900 block mb-2">
               Content
             </label>
-            <div className={`border rounded-lg overflow-hidden ${contentColor}`}>
+            <div
+              className={`border rounded-lg overflow-hidden ${contentColor}`}
+            >
               <div className="flex gap-2 px-3 py-2 border-b bg-gray-100 text-gray-700 text-sm">
                 <Bold
                   className="w-4 h-4 cursor-pointer hover:text-[#820000]"
