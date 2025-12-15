@@ -91,15 +91,9 @@ function Home() {
       })
     );
 
-    // ✅ Sync with backend
+  
     try {
-      console.log(
-        `Sending vote to backend: PATCH /posts/${postId}/vote?userId=${userId}&type=${type}`
-      );
-
       const response = await votePost(postId, type, userId);
-
-      console.log("Vote response:", response.data);
 
       setPosts((prevPosts) =>
         prevPosts.map((post) =>

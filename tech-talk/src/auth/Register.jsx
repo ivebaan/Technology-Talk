@@ -148,7 +148,6 @@ function Register() {
       password: password,
     })
       .then((res) => {
-        console.log(res.data);
         setEmail("");
         setPassword("");
         setConfirmPassword("");
@@ -177,7 +176,10 @@ function Register() {
         className="absolute top-6 left-6 flex items-center gap-2 text-[#820000] hover:text-[#650000] transition font-semibold group"
         title="Back to home"
       >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition" />
+        <ArrowLeft
+          size={20}
+          className="group-hover:-translate-x-1 transition"
+        />
         <span className="hidden sm:inline">Back</span>
       </button>
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden">

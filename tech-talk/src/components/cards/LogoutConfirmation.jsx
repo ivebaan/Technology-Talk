@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 const LogoutConfirmation = ({ onClose }) => {
   const navigate = useNavigate();
@@ -8,13 +8,11 @@ const LogoutConfirmation = ({ onClose }) => {
 
   const handleLogout = () => {
     // Clear localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     localStorage.removeItem("currentUser");
-    
+
     // Clear UserContext
     setCurrentUser(null);
-    
+
     // Redirect to login
     navigate("/login", { replace: true });
   };
@@ -49,6 +47,5 @@ const LogoutConfirmation = ({ onClose }) => {
     </div>
   );
 };
-
 
 export default LogoutConfirmation;

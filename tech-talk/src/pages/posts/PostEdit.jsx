@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getAllPosts, updatePost } from "../api/api";
-import Popup from "../components/cards/Popup";
+import { getAllPosts, updatePost } from "../../api/api";
+import Popup from "../../components/cards/Popup";
 
 function PostEdit() {
   const { postId } = useParams();
@@ -54,7 +54,9 @@ function PostEdit() {
         <div className="bg-white rounded-xl shadow-md p-6">
           <form onSubmit={handleSave} className="space-y-6">
             <div>
-              <label className="block text-xs font-medium text-gray-900 mb-2">Title</label>
+              <label className="block text-xs font-medium text-gray-900 mb-2">
+                Title
+              </label>
               <input
                 type="text"
                 value={title}
@@ -64,7 +66,9 @@ function PostEdit() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-900 mb-2">Content</label>
+              <label className="block text-xs font-medium text-gray-900 mb-2">
+                Content
+              </label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}

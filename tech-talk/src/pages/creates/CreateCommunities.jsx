@@ -1,13 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import {
   createCommunity,
   getAllCategories,
   joinCommunity,
   createCategory,
   getAllCommunities,
-} from "../api/api";
-import Popup from "../components/cards/Popup";
+} from "../../api/api";
+import Popup from "../../components/cards/Popup";
 
 export default function CreateCommunities() {
   const { currentUser } = useContext(UserContext);
