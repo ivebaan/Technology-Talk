@@ -10,11 +10,8 @@ import {
   Code,
   Quote,
 } from "lucide-react";
-import {
-  createPost,
-  getAllCommunities,
-  getJoinedCommunities,
-} from "../../api/api";
+import { createPost, getAllCommunities, getJoinedCommunities } from "../../api/api";
+import { sanitizeContent, validatePost, canSubmit } from "../../utils/postContent";
 import { useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Popup from "../../components/cards/Popup";
@@ -44,7 +41,8 @@ export default function CreatePost() {
   useEffect(() => {
     getAllCommunities()
       .then((res) => setCommunities(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+      });
   }, []);
 
   // Keep joinedIds in sync with currentUser (run on login/change)
@@ -108,19 +106,17 @@ export default function CreatePost() {
     const newErrors = { title: "", content: "" };
     let valid = true;
 
-    if (!title.trim()) {
-      newErrors.title = "Title cannot be empty!";
+    // Sanitize content first
+    const cleanedContent = sanitizeContent(content);
+    const validation = validatePost({ title, content: cleanedContent });
+    if (!validation.valid) {
+      newErrors.title = validation.errors.title || "";
+      newErrors.content = validation.errors.content || "";
       valid = false;
-      setTitleColor("border-red-500");
+      if (newErrors.title) setTitleColor("border-red-500"); else setTitleColor("border-gray-300");
+      if (newErrors.content) setContentColor("border-red-500"); else setContentColor("border-gray-300");
     } else {
       setTitleColor("border-gray-300");
-    }
-
-    if (!content.trim()) {
-      newErrors.content = "Content cannot be empty!";
-      valid = false;
-      setContentColor("border-red-500");
-    } else {
       setContentColor("border-gray-300");
     }
 
@@ -146,9 +142,15 @@ export default function CreatePost() {
     setErrors(newErrors);
     if (!valid) return;
 
+    // Prevent duplicate submissions within 3 seconds
+    if (!canSubmit()) {
+      setPopup({ message: "Duplicate submission detected. Please wait a moment.", type: "warning" });
+      return;
+    }
+
     createPost({
-      title: title,
-      content: content,
+      title: title.trim(),
+      content: cleanedContent,
       userId: currentUser.id,
       communityId: selectedCommunityId,
       votes: 0,
@@ -162,7 +164,10 @@ export default function CreatePost() {
         if (editorRef.current) editorRef.current.innerHTML = "";
         setPopup({ message: "Successfully Posted!", type: "success" });
       })
-      .catch((err) => console.error("Error creating post:", err));
+      .catch((err) => {
+        console.error("Error creating post:", err);
+        setPopup({ message: "Failed to post. Please try again.", type: "error" });
+      });
   };
 
   return (
@@ -224,11 +229,11 @@ export default function CreatePost() {
               placeholder="Enter post title..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              maxLength={300}
+              maxLength={120}
               className={`w-full text-sm px-3 py-2 bg-white border rounded-lg text-gray-900 placeholder-gray-500 outline-none focus:ring-1 focus:ring-[#820000] ${titleColor}`}
             />
             <div className="text-xs text-gray-500 text-right mt-1">
-              {title.length}/300
+              {title.length}/120
             </div>
             {errors.title && (
               <p className="text-red-600 text-xs mt-1">{errors.title}</p>

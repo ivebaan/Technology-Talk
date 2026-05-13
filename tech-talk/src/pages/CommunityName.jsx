@@ -125,7 +125,15 @@ export default function CommunityName() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("No userId found");
+      setPopup({ message: "Please log in to vote.", type: "warning" });
+      return;
+    }
+
+    // Prevent voting on own posts
+    const target = communityPosts.find((p) => p.id === postId);
+    const ownerId = target?.createdBy?.id || target?.createdBy?.userId;
+    if (ownerId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
       return;
     }
 

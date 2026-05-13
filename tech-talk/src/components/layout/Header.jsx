@@ -28,7 +28,9 @@ export default function Header() {
     axios;
     getAllCommunities()
       .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        // Silent fail - don't expose errors in console
+      });
   }, []);
 
   const categories = data.map((u) => u.name);
