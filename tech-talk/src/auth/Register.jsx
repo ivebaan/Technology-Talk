@@ -27,7 +27,9 @@ function Register() {
   useEffect(() => {
     getAllUsers()
       .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        // Silent fail - don't expose errors in console
+      });
   }, []);
 
   const [errors, setErrors] = useState({

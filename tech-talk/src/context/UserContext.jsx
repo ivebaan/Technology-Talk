@@ -1,67 +1,63 @@
 import { createContext, useState, useEffect, useRef } from "react";
 
-export const UserContext = createContext();
+export const UserContext = createContext({
+  currentUser: null,
+  setCurrentUser: () => {},
+});
 
-// Helper function to validate user data structure
-const isValidUserData = (userData) => {
-  if (!userData || typeof userData !== "object") return false;
-  // Check if required fields exist
-  const requiredFields = ["id", "email"];
-  return requiredFields.every((field) => field in userData);
-};
+// Generate a secure session token
+const generateToken = (userData) => {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 15);
+  const dataString = JSON.stringify({
+    email: userData.email,
+    timestamp,
+    random,
+  });
 
-// Helper function to generate a simple hash for integrity check
-const generateHash = (data) => {
-  const str = JSON.stringify(data);
   let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
+  for (let i = 0; i < dataString.length; i++) {
+    const char = dataString.charCodeAt(i);
     hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
+    hash = hash & hash;
   }
-  return hash.toString();
+
+  return `${Math.abs(hash).toString(36)}.${random}.${timestamp.toString(36)}`;
 };
 
 export function UserProvider({ children }) {
   const isInitialMount = useRef(true);
-  const storedHashRef = useRef(null);
+  const tokenRef = useRef(null);
+  const userDataRef = useRef(null); // Store ALL user data in memory only
 
   const [currentUser, setCurrentUser] = useState(() => {
+    // Clean up old localStorage keys from previous implementation
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("currentUser_hash");
+    localStorage.removeItem("_sk");
+    sessionStorage.removeItem("uid");
+
     try {
-      const stored = localStorage.getItem("currentUser");
-      const storedHash = localStorage.getItem("currentUser_hash");
+      const token = localStorage.getItem("authToken");
+      const encryptedData = sessionStorage.getItem("_usr");
 
-      if (stored) {
-        const userData = JSON.parse(stored);
-
-        // Validate data structure
-        if (!isValidUserData(userData)) {
-          // console.warn(
-          //   "Invalid user data structure in localStorage. Clearing..."
-          // );
-          localStorage.removeItem("currentUser");
-          localStorage.removeItem("currentUser_hash");
+      if (token && encryptedData) {
+        // Decrypt and restore user data from sessionStorage
+        try {
+          const userData = JSON.parse(atob(encryptedData));
+          tokenRef.current = token;
+          userDataRef.current = userData;
+          return userData;
+        } catch {
+          localStorage.removeItem("authToken");
+          sessionStorage.removeItem("_usr");
           return null;
         }
-
-        // Verify integrity with hash
-        const computedHash = generateHash(userData);
-        if (storedHash && storedHash !== computedHash) {
-          // console.warn(
-          //   "User data integrity check failed. Data may have been tampered with. Clearing..."
-          // );
-          localStorage.removeItem("currentUser");
-          localStorage.removeItem("currentUser_hash");
-          return null;
-        }
-
-        storedHashRef.current = computedHash;
-        return userData;
       }
     } catch (error) {
-      console.error("Error parsing user data from localStorage:", error);
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("currentUser_hash");
+      console.error("Error restoring session:", error);
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("_usr");
     }
     return null;
   });
@@ -74,66 +70,65 @@ export function UserProvider({ children }) {
     }
 
     if (currentUser) {
-      const userDataString = JSON.stringify(currentUser);
-      const hash = generateHash(currentUser);
-      localStorage.setItem("currentUser", userDataString);
-      localStorage.setItem("currentUser_hash", hash);
-      storedHashRef.current = hash;
+      // Generate and store ONLY the token in localStorage
+      const token = generateToken(currentUser);
+      tokenRef.current = token;
+      localStorage.setItem("authToken", token);
+
+      // Store encrypted user data in sessionStorage (memory only, clears on browser close)
+      userDataRef.current = currentUser;
+      sessionStorage.setItem("_usr", btoa(JSON.stringify(currentUser)));
     } else {
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("currentUser_hash");
-      storedHashRef.current = null;
+      // Clear everything on logout
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("_usr");
+      tokenRef.current = null;
+      userDataRef.current = null;
     }
   }, [currentUser]);
 
-  // Periodic validation to detect manual localStorage tampering
+  // Periodic validation to detect token tampering
   useEffect(() => {
-    const validateStoredData = () => {
+    const validateToken = () => {
       if (!currentUser) return;
 
       try {
-        const stored = localStorage.getItem("currentUser");
-        const storedHash = localStorage.getItem("currentUser_hash");
+        const token = localStorage.getItem("authToken");
+        const sessionData = sessionStorage.getItem("_usr");
 
-        if (!stored || !storedHash) {
-          // Data was removed, log out user
-          // console.warn("User data removed from localStorage. Logging out...");
+        // If token or session data is missing, log out
+        if (!token || !sessionData) {
           setCurrentUser(null);
           return;
         }
 
-        const userData = JSON.parse(stored);
-        const computedHash = generateHash(userData);
-
-        // Check if hash matches
-        if (
-          storedHash !== computedHash ||
-          storedHash !== storedHashRef.current
-        ) {
-          console.warn("User data was tampered with. Logging out...");
-          localStorage.removeItem("currentUser");
-          localStorage.removeItem("currentUser_hash");
+        // If token was tampered with, log out
+        if (token !== tokenRef.current) {
+          localStorage.removeItem("authToken");
+          sessionStorage.removeItem("_usr");
           setCurrentUser(null);
           return;
         }
 
-        // Validate data structure
-        if (!isValidUserData(userData)) {
-          console.warn("Invalid user data structure detected. Logging out...");
-          localStorage.removeItem("currentUser");
-          localStorage.removeItem("currentUser_hash");
+        // Validate session data integrity
+        try {
+          const userData = JSON.parse(atob(sessionData));
+          if (!userData || !userData.email || !userData.id) {
+            setCurrentUser(null);
+          }
+        } catch {
           setCurrentUser(null);
         }
       } catch (error) {
-        console.error("Error validating localStorage:", error);
-        localStorage.removeItem("currentUser");
-        localStorage.removeItem("currentUser_hash");
+        console.error("Error validating token:", error);
+        localStorage.removeItem("authToken");
+        sessionStorage.removeItem("_usr");
         setCurrentUser(null);
       }
     };
 
     // Check every 2 seconds for tampering
-    const intervalId = setInterval(validateStoredData, 2000);
+    const intervalId = setInterval(validateToken, 2000);
 
     return () => clearInterval(intervalId);
   }, [currentUser]);

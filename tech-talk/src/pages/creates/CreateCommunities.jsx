@@ -31,12 +31,14 @@ export default function CreateCommunities() {
     // Fetch categories
     getAllCategories()
       .then((res) => setSuggestedCategories(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+      });
 
     // Fetch existing communities
     getAllCommunities()
       .then((res) => setExistingCommunities(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+      });
   }, []);
 
   const addCategory = (catObj) => {

@@ -11,6 +11,7 @@ import { UserContext } from "../context/UserContext";
 
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
+import Popup from "../components/cards/Popup";
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -20,6 +21,7 @@ function Home() {
 
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
+  const [popup, setPopup] = useState(null);
 
   // Fetch Data
   const fetchAllData = async () => {
@@ -57,7 +59,15 @@ function Home() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("No userId found");
+      setPopup({ message: "Please log in to vote.", type: "warning" });
+      return;
+    }
+
+    // Prevent voting on own posts
+    const targetPost = posts.find((p) => p.id === postId);
+    const ownerId = targetPost?.createdBy?.id || targetPost?.createdBy?.userId;
+    if (ownerId && userId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
       return;
     }
 
@@ -203,6 +213,9 @@ function Home() {
                 No posts yet
               </p>
             </div>
+          )}
+          {popup && (
+            <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />
           )}
         </main>
 

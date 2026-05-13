@@ -8,6 +8,7 @@ import {
   votePost,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
+import Popup from "../components/cards/Popup";
 import { BookmarkIcon } from "@heroicons/react/24/solid";
 
 function Favorites() {
@@ -18,6 +19,7 @@ function Favorites() {
   // Get logged-in user from context
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
@@ -86,7 +88,14 @@ function Favorites() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
-      console.warn("No userId found");
+      setPopup({ message: "Please log in to vote.", type: "warning" });
+      return;
+    }
+
+    const target = favoritePosts.find((p) => p.id === postId);
+    const ownerId = target?.createdBy?.id || target?.createdBy?.userId;
+    if (ownerId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
       return;
     }
 
@@ -164,6 +173,9 @@ function Favorites() {
                 openDropdown={openDropdown}
               />
             ))}
+            {popup && (
+              <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />
+            )}
           </div>
         )}
       </div>
