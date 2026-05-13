@@ -21,6 +21,7 @@ export default function CommunityName() {
   const { communityName } = useParams();
   const [communityData, setCommunityData] = useState(null);
   const [communityPosts, setCommunityPosts] = useState([]);
+  const [voting, setVoting] = useState({});
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -44,9 +45,9 @@ export default function CommunityName() {
 
         // Fetch all posts and filter by community ID
         const postsRes = await getAllPosts();
-        const filteredPosts = postsRes.data.filter(
-          (post) => post.community?.id === community.communityId
-        );
+        const filteredPosts = postsRes.data
+          .filter((post) => post.community?.id === community.communityId)
+          .map((post) => ({ ...post, voteStatus: post.userVote || post.voteStatus || null }));
         setCommunityPosts(filteredPosts);
 
         // Check if user is in joined communities
@@ -137,6 +138,9 @@ export default function CommunityName() {
       return;
     }
 
+    if (voting[postId]) return;
+    setVoting((s) => ({ ...s, [postId]: true }));
+
     // Instant UI update
     setCommunityPosts((prev) => {
       return prev.map((post) => {
@@ -144,17 +148,17 @@ export default function CommunityName() {
           let newVotes = post.votes || 0;
           if (type === "up") {
             if (post.voteStatus === "up") {
-              newVotes -= 1;
+              newVotes = Math.max(0, newVotes - 1);
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes += post.voteStatus === "down" ? 2 : 1;
-            return { ...post, votes: newVotes, voteStatus: "up" };
+            return { ...post, votes: Math.max(0, newVotes), voteStatus: "up" };
           } else if (type === "down") {
             if (post.voteStatus === "down") {
               newVotes += 1;
-              return { ...post, votes: newVotes, voteStatus: null };
+              return { ...post, votes: Math.max(0, newVotes), voteStatus: null };
             }
-            newVotes -= post.voteStatus === "up" ? 2 : 1;
+            newVotes = Math.max(0, newVotes - (post.voteStatus === "up" ? 2 : 1));
             return { ...post, votes: newVotes, voteStatus: "down" };
           }
         }
@@ -167,11 +171,23 @@ export default function CommunityName() {
       const response = await votePost(postId, type, userId);
       setCommunityPosts((prev) =>
         prev.map((post) =>
-          post.id === postId ? { ...post, votes: response.data.votes } : post
+          post.id === postId
+            ? {
+                ...post,
+                votes: Math.max(0, response.data.votes ?? post.votes ?? 0),
+                voteStatus: response.data.userVote || post.voteStatus,
+              }
+            : post
         )
       );
     } catch (err) {
       console.error("Vote sync failed:", err);
+    } finally {
+      setVoting((s) => {
+        const n = { ...s };
+        delete n[postId];
+        return n;
+      });
     }
   };
 
@@ -272,6 +288,7 @@ export default function CommunityName() {
                 handleAddToFavorites={handleAddToFavorites}
                 isFavorite={favoriteIds.includes(post.id)}
                 openDropdown={openDropdown}
+                votingDisabled={!!voting[post.id]}
               />
             ))
           ) : (

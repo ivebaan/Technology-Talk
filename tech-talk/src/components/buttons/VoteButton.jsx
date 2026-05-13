@@ -8,6 +8,8 @@ export default function VoteButton({
   onDownVote,
   disabled = false,
 }) {
+  const safeVotes = Math.max(0, Number(votes) || 0);
+
   return (
     <div
       className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all duration-200 text-sm font-semibold shadow-sm ${
@@ -31,7 +33,7 @@ export default function VoteButton({
       </button>
 
       <span className="mx-1 min-w-[1.5rem] text-center text-xs font-bold">
-        {votes}
+        {safeVotes}
       </span>
 
       <button
