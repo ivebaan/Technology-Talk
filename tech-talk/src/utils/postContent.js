@@ -52,8 +52,12 @@ export function validatePost({ title, content }) {
   const c = content || "";
   if (!hasNonWhitespaceContent(c)) {
     errors.content = "Content cannot be empty.";
-  } else if (c.length > 5000) {
-    errors.content = "Content must not exceed 5000 characters.";
+  } else {
+    // Measure text length (strip HTML) for character limit
+    const textOnly = c.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
+    if (textOnly.length > 5000) {
+      errors.content = "Content must not exceed 5000 characters.";
+    }
   }
 
   const valid = !errors.title && !errors.content;
