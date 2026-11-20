@@ -11,15 +11,18 @@ import { UserContext } from "../context/UserContext";
 
 import Postcard from "../components/cards/Postcard";
 import PopularCommunitiesCard from "../components/cards/PopularCommunitiesCard";
+import Popup from "../components/cards/Popup";
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const [voting, setVoting] = useState({});
   const [openDropdown, setOpenDropdown] = useState(null);
   const [communities, setCommunities] = useState([]);
   const [favorites, setFavorites] = useState([]);
 
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
+  const [popup, setPopup] = useState(null);
 
   // Fetch Data
   const fetchAllData = async () => {
@@ -35,7 +38,7 @@ function Home() {
       const normalizedPosts = postsRes.data
         .map((post) => ({
           ...post,
-          voteStatus: null,
+          voteStatus: post.userVote || post.voteStatus || null,
         }))
         .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
 
@@ -56,9 +59,20 @@ function Home() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
+      setPopup({ message: "Please log in to vote.", type: "warning" });
       return;
     }
 
+    // Prevent voting on own posts
+    const targetPost = posts.find((p) => p.id === postId);
+    const ownerId = targetPost?.createdBy?.id || targetPost?.createdBy?.userId;
+    if (ownerId && userId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
+      return;
+    }
+
+    if (voting[postId]) return; // already voting
+    setVoting((s) => ({ ...s, [postId]: true }));
     const oldPosts = posts;
 
     // Instant UI update
@@ -69,19 +83,19 @@ function Home() {
 
           if (type === "up") {
             if (post.voteStatus === "up") {
-              newVotes -= 1;
+              newVotes = Math.max(0, newVotes - 1);
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes += post.voteStatus === "down" ? 2 : 1;
-            return { ...post, votes: newVotes, voteStatus: "up" };
+            return { ...post, votes: Math.max(0, newVotes), voteStatus: "up" };
           }
 
           if (type === "down") {
             if (post.voteStatus === "down") {
               newVotes += 1;
-              return { ...post, votes: newVotes, voteStatus: null };
+              return { ...post, votes: Math.max(0, newVotes), voteStatus: null };
             }
-            newVotes -= post.voteStatus === "up" ? 2 : 1;
+            newVotes = Math.max(0, newVotes - (post.voteStatus === "up" ? 2 : 1));
             return { ...post, votes: newVotes, voteStatus: "down" };
           }
         }
@@ -92,16 +106,22 @@ function Home() {
   
     try {
       const response = await votePost(postId, type, userId);
-
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === postId ? { ...post, votes: response.data.votes } : post
+          post.id === postId
+            ? { ...post, votes: Math.max(0, response.data.votes ?? post.votes ?? 0), voteStatus: response.data.userVote || post.voteStatus }
+            : post
         )
       );
     } catch (err) {
 
       setPosts(oldPosts);
     }
+    setVoting((s) => {
+      const n = { ...s };
+      delete n[postId];
+      return n;
+    });
   };
 
   const handleThreeDots = (e, id) => {
@@ -188,6 +208,7 @@ function Home() {
                 handleAddToFavorites={handleAddToFavorites}
                 isFavorite={favorites.includes(post.id)}
                 openDropdown={openDropdown}
+                votingDisabled={!!voting[post.id]}
               />
             ))
           ) : (
@@ -196,6 +217,9 @@ function Home() {
                 No posts yet
               </p>
             </div>
+          )}
+          {popup && (
+            <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />
           )}
         </main>
 

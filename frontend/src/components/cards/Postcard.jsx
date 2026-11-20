@@ -14,6 +14,7 @@ function Postcard({
   openDropdown,
   handleAddToFavorites = () => {},
   isFavorite,
+  votingDisabled = false,
 }) {
   const navigate = useNavigate();
   const [commentCount, setCommentCount] = useState(post.comments || 0);
@@ -135,6 +136,7 @@ function Postcard({
             voteStatus={post.voteStatus || null}
             onUpVote={() => handleVote(post.id, "up")}
             onDownVote={() => handleVote(post.id, "down")}
+            disabled={votingDisabled}
           />
 
           {/* Comments */}

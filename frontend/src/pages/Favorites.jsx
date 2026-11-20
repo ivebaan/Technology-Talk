@@ -8,16 +8,19 @@ import {
   votePost,
 } from "../api/api";
 import { UserContext } from "../context/UserContext";
+import Popup from "../components/cards/Popup";
 import { BookmarkIcon } from "@heroicons/react/24/solid";
 
 function Favorites() {
   const [favoritePosts, setFavoritePosts] = useState([]);
+  const [voting, setVoting] = useState({});
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
 
   // Get logged-in user from context
   const { currentUser } = useContext(UserContext);
   const userId = currentUser?.id || currentUser?.userId;
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     const fetchFavoritesAndPosts = async () => {
@@ -42,7 +45,9 @@ function Favorites() {
         setFavoriteIds(userFavs);
 
         // Get only the favorited posts
-        const favPosts = allPosts.filter((post) => userFavs.includes(post.id));
+        const favPosts = allPosts
+          .filter((post) => userFavs.includes(post.id))
+          .map((post) => ({ ...post, voteStatus: post.userVote || post.voteStatus || null }));
         setFavoritePosts(favPosts);
       } catch (err) {
       }
@@ -83,8 +88,19 @@ function Favorites() {
 
   const handleVote = async (postId, type) => {
     if (!userId) {
+      setPopup({ message: "Please log in to vote.", type: "warning" });
       return;
     }
+
+    const target = favoritePosts.find((p) => p.id === postId);
+    const ownerId = target?.createdBy?.id || target?.createdBy?.userId;
+    if (ownerId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
+      return;
+    }
+
+    if (voting[postId]) return;
+    setVoting((s) => ({ ...s, [postId]: true }));
 
     // Store old posts in case we need to revert
     const oldPosts = favoritePosts;
@@ -96,17 +112,17 @@ function Favorites() {
           let newVotes = post.votes || 0;
           if (type === "up") {
             if (post.voteStatus === "up") {
-              newVotes -= 1;
+              newVotes = Math.max(0, newVotes - 1);
               return { ...post, votes: newVotes, voteStatus: null };
             }
             newVotes += post.voteStatus === "down" ? 2 : 1;
-            return { ...post, votes: newVotes, voteStatus: "up" };
+            return { ...post, votes: Math.max(0, newVotes), voteStatus: "up" };
           } else if (type === "down") {
             if (post.voteStatus === "down") {
               newVotes += 1;
-              return { ...post, votes: newVotes, voteStatus: null };
+              return { ...post, votes: Math.max(0, newVotes), voteStatus: null };
             }
-            newVotes -= post.voteStatus === "up" ? 2 : 1;
+            newVotes = Math.max(0, newVotes - (post.voteStatus === "up" ? 2 : 1));
             return { ...post, votes: newVotes, voteStatus: "down" };
           }
         }
@@ -119,12 +135,24 @@ function Favorites() {
       const response = await votePost(postId, type, userId);
       setFavoritePosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.id === postId ? { ...post, votes: response.data.votes } : post
+          post.id === postId
+            ? {
+                ...post,
+                votes: Math.max(0, response.data.votes ?? post.votes ?? 0),
+                voteStatus: response.data.userVote || post.voteStatus,
+              }
+            : post
         )
       );
     } catch (err) {
       // Revert on error
       setFavoritePosts(oldPosts);
+    } finally {
+      setVoting((s) => {
+        const n = { ...s };
+        delete n[postId];
+        return n;
+      });
     }
   };
 
@@ -157,8 +185,12 @@ function Favorites() {
                 handleAddToFavorites={handleAddToFavorites}
                 isFavorite={favoriteIds.includes(post.id)}
                 openDropdown={openDropdown}
+                votingDisabled={!!voting[post.id]}
               />
             ))}
+            {popup && (
+              <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />
+            )}
           </div>
         )}
       </div>
