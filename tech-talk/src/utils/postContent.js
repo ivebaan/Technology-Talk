@@ -20,22 +20,17 @@ export function sanitizeContent(html) {
 
     // Return cleaned innerHTML of body
     return doc.body.innerHTML.trim();
-  } catch (err) {
-    // Fallback: strip script tags and event handlers with simple regex
-    return html
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-      .replace(/on\w+\s*=\s*\"[^\"]*\"/gi, "")
-      .replace(/on\w+\s*=\s*'[^']*'/gi, "")
-      .trim();
+  } catch {
+    // Fail closed if HTML parsing is unavailable.
+    return "";
   }
 }
 
 // Check that content has at least one non-whitespace character when stripped of HTML
 export function hasNonWhitespaceContent(html) {
   if (!html) return false;
-  // Remove tags
-  const text = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
-  return /\S/.test(text);
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return /\S/.test(doc.body.textContent || "");
 }
 
 // Validate title and content according to FSD rules
@@ -53,9 +48,8 @@ export function validatePost({ title, content }) {
   if (!hasNonWhitespaceContent(c)) {
     errors.content = "Content cannot be empty.";
   } else {
-    // Measure text length (strip HTML) for character limit
-    const textOnly = c.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
-    if (textOnly.length > 5000) {
+    const doc = new DOMParser().parseFromString(c, "text/html");
+    if ((doc.body.textContent || "").length > 5000) {
       errors.content = "Content must not exceed 5000 characters.";
     }
   }

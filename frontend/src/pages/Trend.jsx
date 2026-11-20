@@ -1,0 +1,184 @@
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Postcard from "../components/cards/Postcard";
+import { getAllFavorites, addToFavorites, deleteFavoriteById, votePost } from "../api/api";
+import { UserContext } from "../context/UserContext";
+import Popup from "../components/cards/Popup";
+
+function Trend() {
+  const [posts, setPosts] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [favoriteIds, setFavoriteIds] = useState([]);
+  const [popup, setPopup] = useState(null);
+  const [voting, setVoting] = useState({});
+  const navigate = useNavigate();
+
+  const { currentUser } = useContext(UserContext);
+  const userId = currentUser?.id || currentUser?.userId;
+
+  useEffect(() => {
+    const fetchPostsAndFavorites = async () => {
+      try {
+        const [postsRes, favRes] = await Promise.all([
+          axios.get("http://localhost:8081/posts/getAll"),
+          userId ? getAllFavorites() : Promise.resolve({ data: [] }),
+        ]);
+
+        setPosts((postsRes.data || []).map((p) => ({ ...p, voteStatus: p.userVote || p.voteStatus || null })));
+
+        if (userId && favRes.data) {
+          const userFavs = favRes.data
+            .filter((f) => f.post && f.user?.id === userId)
+            .map((f) => f.post.id);
+          setFavoriteIds(userFavs);
+        }
+      } catch (err) {
+      }
+    };
+
+    fetchPostsAndFavorites();
+  }, [userId]);
+
+  const handleVote = async (postId, type) => {
+    if (!userId) {
+      setPopup({ message: "Please log in to vote.", type: "warning" });
+      return;
+    }
+
+    if (voting[postId]) return;
+    const target = posts.find((p) => p.id === postId);
+    const ownerId = target?.createdBy?.id || target?.createdBy?.userId;
+    if (ownerId && ownerId === userId) {
+      setPopup({ message: "You cannot vote on your own post.", type: "warning" });
+      return;
+    }
+
+    setVoting((s) => ({ ...s, [postId]: true }));
+    const oldPosts = posts;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === postId) {
+          let newVotes = post.votes || 0;
+          if (type === "up") {
+            if (post.voteStatus === "up") {
+              newVotes = Math.max(0, newVotes - 1);
+              return { ...post, votes: newVotes, voteStatus: null };
+            }
+            newVotes += post.voteStatus === "down" ? 2 : 1;
+            return { ...post, votes: Math.max(0, newVotes), voteStatus: "up" };
+          } else if (type === "down") {
+            if (post.voteStatus === "down") {
+              newVotes += 1;
+              return { ...post, votes: Math.max(0, newVotes), voteStatus: null };
+            }
+            newVotes = Math.max(0, newVotes - (post.voteStatus === "up" ? 2 : 1));
+            return { ...post, votes: newVotes, voteStatus: "down" };
+          }
+        }
+        return post;
+      })
+    );
+
+    try {
+      const response = await votePost(postId, type, userId);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId ? { ...post, votes: Math.max(0, response.data.votes ?? post.votes ?? 0), voteStatus: response.data.userVote || post.voteStatus } : post
+        )
+      );
+    } catch {
+      setPosts(oldPosts);
+    }
+    setVoting((s) => {
+      const n = { ...s };
+      delete n[postId];
+      return n;
+    });
+  };
+
+  const handleThreeDots = (e, id) => {
+    e.stopPropagation();
+    setOpenDropdown((prev) => (prev === id ? null : id));
+  };
+
+  const handleAddToFavorites = async (postId) => {
+    if (!userId) return;
+
+    try {
+      const isFav = favoriteIds.includes(postId);
+      if (isFav) {
+        const favRes = await getAllFavorites();
+        const favItem = favRes.data.find((f) => f.post?.id === postId && f.user?.id === userId);
+        if (favItem) {
+          await deleteFavoriteById(favItem.favoriteId);
+          setFavoriteIds((prev) => prev.filter((id) => id !== postId));
+          setPopup({ message: "Post removed from favorites!", type: "success" });
+        }
+      } else {
+        await addToFavorites(postId, userId);
+        setFavoriteIds((prev) => [...prev, postId]);
+        setPopup({ message: "Post added to favorites!", type: "success" });
+      }
+    } catch (err) {
+      setPopup({ message: "Failed to update favorites.", type: "error" });
+    }
+  };
+
+  const handleNavigateToCommunity = (communityName) => {
+    navigate(`/app/community/${communityName}`);
+  };
+
+  return (
+    <div className="bg-gray-50 min-h-screen py-4">
+      <div className="max-w-2xl mx-auto px-4 space-y-3">
+        <section className="space-y-3">
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <Postcard
+                key={post.id}
+                post={post}
+                handleVote={handleVote}
+                handleThreeDots={handleThreeDots}
+                handleAddToFavorites={handleAddToFavorites}
+                isFavorite={favoriteIds.includes(post.id)}
+                  openDropdown={openDropdown}
+                  votingDisabled={!!voting[post.id]}
+              />
+            ))
+          ) : (
+            <div className="bg-white rounded-lg p-8 text-center border border-gray-200">
+              <p className="text-gray-500 font-medium">No posts</p>
+            </div>
+          )}
+        </section>
+
+        {posts.length > 0 && (
+          <section className="mt-6">
+            <h3 className="font-bold text-gray-800 mb-3 text-sm">Recent</h3>
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
+              {posts
+                .slice()
+                .reverse()
+                .slice(0, 5)
+                .map((post) => (
+                  <div key={post.id} className="p-3 hover:bg-gray-50 cursor-pointer transition-colors text-xs">
+                    <span onClick={() => handleNavigateToCommunity(post.community?.name)} className="text-[#820000] font-semibold hover:underline">
+                      r/{post.community?.name || "Unknown"}
+                    </span>
+                    <h3 onClick={() => navigate(`/app/post/${post.id}`)} className="text-gray-900 font-semibold hover:text-[#820000] transition-colors truncate">
+                      {post.title}
+                    </h3>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+      </div>
+      {popup && <Popup message={popup.message} type={popup.type} onClose={() => setPopup(null)} />}
+    </div>
+  );
+}
+
+export default Trend;
